@@ -1,0 +1,26 @@
+framework:
+    messenger:
+        serializer:
+            default_serializer: messenger.transport.symfony_serializer
+            symfony_serializer:
+                format: json
+                context: { }
+        transports:
+            sqs_cas_fifo:
+                dsn: "%env(MESSENGER_TRANSPORT_SQS_CAS_FIFO_DSN)%"
+                serializer: App\Messenger\SqsJsonMessageSerializer
+                options:
+                    auto_setup: false
+            sqs_pimcore_fifo:
+                dsn: "%env(MESSENGER_TRANSPORT_SQS_PIMCORE_FIFO_DSN)%"
+                serializer: App\Messenger\SqsJsonMessageSerializer
+                options:
+                    auto_setup: false
+            sqs_aws_fifo:
+                dsn: "%env(MESSENGER_TRANSPORT_SQS_AWS_FIFO_DSN)%"
+                options:
+                    auto_setup: false
+        routing:
+            'App\Message\SqsCasMessageInterface': sqs_cas_fifo
+            'App\Message\SqsPimcoreMessageInterface': sqs_pimcore_fifo
+            'App\Message\SqsAWSMessageInterface': sqs_aws_fifo

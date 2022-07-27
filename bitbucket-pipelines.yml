@@ -1,0 +1,24 @@
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          name: Build and Test
+          image: tmaier/docker-compose:latest
+          caches:
+            - docker
+          services:
+            - docker
+          script:
+            - apk add make
+
+            - cd $BITBUCKET_CLONE_DIR
+            - export DATABASE_VOLUME="$BITBUCKET_CLONE_DIR/db_volume"
+            - export ELASTICSEARCH_VOLUME="$BITBUCKET_CLONE_DIR/elasticsearch_volume"
+            - export LOCALSTACK_VOLUME="$BITBUCKET_CLONE_DIR/localstack_volume"
+
+            - make test
+
+definitions:
+  services:
+    docker:
+      memory: 2048

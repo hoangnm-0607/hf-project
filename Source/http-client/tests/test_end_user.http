@@ -1,0 +1,91 @@
+### Create EndUser
+POST {{api_scheme}}{{api_host}}/api/endusers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "firstName": "Andy",
+    "lastName": "Richard",
+    "privateEmail": "andy@gmail.com",
+    "businessEmail": "richard@gmail.com",
+    "gender": "male",
+    "dateOfBirth": "2000-02-12",
+    "phoneNumber": "+48123123123",
+    "companyId": 621,
+    "customFields": {
+        "employId": "emp!",
+        "new-balance": "753"
+    }
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+
+    if (201 === response.status) {
+        client.global.set("enduserId", response.body.id);
+    }
+%}
+
+### Update EndUser
+PATCH {{api_scheme}}{{api_host}}/api/endusers/{{enduserId}}
+Authorization: Bearer {{token}}
+Content-Type: application/merge-patch+json
+
+{
+    "firstName": "Jacky"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### View EndUser
+GET {{api_scheme}}{{api_host}}/api/endusers/{{enduserId}}
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### GET EndUser status
+GET {{api_scheme}}{{api_host}}/api/endusers/627/status
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Put EndUser status
+PUT {{api_scheme}}{{api_host}}/api/endusers/627/transition
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "transaction": "deactivate",
+    "startDate": "2022-07-01",
+    "endDate": "2022-07-07"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Delete EndUser
+DELETE {{api_scheme}}{{api_host}}/api/endusers/{{enduserId}}
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 204, "Response status is not 204");
+    });
+%}

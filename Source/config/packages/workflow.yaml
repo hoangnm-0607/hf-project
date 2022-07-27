@@ -1,0 +1,61 @@
+framework:
+    workflows:
+        end_user_status:
+            type: 'state_machine'
+            audit_trail:
+                enabled: '%is_debug%'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            support_strategy: App\Service\Workflow\EndUserStatusSupportStrategyService
+            initial_marking: !php/const App\DBAL\Types\EndUserStatusType::INVITED
+            places:
+                - !php/const App\DBAL\Types\EndUserStatusType::INVITED
+                - !php/const App\DBAL\Types\EndUserStatusType::APPLIED
+                - !php/const App\DBAL\Types\EndUserStatusType::CONFIRMED
+                - !php/const App\DBAL\Types\EndUserStatusType::PENDING
+                - !php/const App\DBAL\Types\EndUserStatusType::ELIGIBLE
+                - !php/const App\DBAL\Types\EndUserStatusType::ACTIVE
+                - !php/const App\DBAL\Types\EndUserStatusType::PAUSED
+                - !php/const App\DBAL\Types\EndUserStatusType::INACTIVE
+                - !php/const App\DBAL\Types\EndUserStatusType::UNASSIGNED
+                - !php/const App\DBAL\Types\EndUserStatusType::DELETED
+                - !php/const App\DBAL\Types\EndUserStatusType::DENIED
+            transitions:
+                !php/const App\Workflow\EndUserStatusTransitions::DENY:
+                    from:
+                        - !php/const App\DBAL\Types\EndUserStatusType::APPLIED
+                    to: !php/const App\DBAL\Types\EndUserStatusType::DENIED
+
+                !php/const App\Workflow\EndUserStatusTransitions::ACCEPT:
+                    from:
+                        - !php/const App\DBAL\Types\EndUserStatusType::APPLIED
+                    to: !php/const App\DBAL\Types\EndUserStatusType::CONFIRMED
+
+                !php/const App\Workflow\EndUserStatusTransitions::CHANGE_PENDING_START_DATE:
+                    from:
+                        - !php/const App\DBAL\Types\EndUserStatusType::PENDING
+                    to: !php/const App\DBAL\Types\EndUserStatusType::PENDING
+
+                !php/const App\Workflow\EndUserStatusTransitions::ON_PAUSE:
+                    from:
+                        - !php/const App\DBAL\Types\EndUserStatusType::ACTIVE
+                        - !php/const App\DBAL\Types\EndUserStatusType::INACTIVE
+                    to: !php/const App\DBAL\Types\EndUserStatusType::PAUSED
+
+                !php/const App\Workflow\EndUserStatusTransitions::DEACTIVATE_END_DATE:
+                    from:
+                        - !php/const App\DBAL\Types\EndUserStatusType::ACTIVE
+                        - !php/const App\DBAL\Types\EndUserStatusType::PAUSED
+                    to: !php/const App\DBAL\Types\EndUserStatusType::INACTIVE
+
+                !php/const App\Workflow\EndUserStatusTransitions::DEACTIVATE_START_DATE:
+                    from:
+                        - !php/const App\DBAL\Types\EndUserStatusType::ACTIVE
+                        - !php/const App\DBAL\Types\EndUserStatusType::PAUSED
+                    to: !php/const App\DBAL\Types\EndUserStatusType::INACTIVE
+
+                !php/const App\Workflow\EndUserStatusTransitions::DELETE:
+                    from:
+                        - !php/const App\DBAL\Types\EndUserStatusType::INACTIVE
+                    to: !php/const App\DBAL\Types\EndUserStatusType::UNASSIGNED

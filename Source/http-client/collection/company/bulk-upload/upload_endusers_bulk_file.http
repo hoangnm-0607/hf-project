@@ -1,0 +1,21 @@
+// @name Upload Company EndUsers file
+POST {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-upload
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="users.csv"
+Content-Type: text/csv
+
+< ./../../../resources/files/users.csv
+--WebAppBoundary--
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    if (200 === response.status || 201 === response.status) {
+        client.global.set("confirmationId", response.body.confirmationId);
+    }
+%}

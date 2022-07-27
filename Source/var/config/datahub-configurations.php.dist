@@ -1,0 +1,572 @@
+<?php
+
+return [
+    "folders" => [
+
+    ],
+    "list" => [
+        "PartnerImport" => [
+            "general" => [
+                "type" => "dataImporterDataObject",
+                "name" => "PartnerImport",
+                "description" => "",
+                "active" => FALSE,
+                "path" => NULL
+            ],
+            "loaderConfig" => [
+                "type" => "upload",
+                "settings" => [
+                    "uploadFilePath" => "PartnerImport/upload.import"
+                ]
+            ],
+            "interpreterConfig" => [
+                "type" => "xlsx",
+                "settings" => [
+                    "skipFirstRow" => TRUE,
+                    "sheetName" => "Partner Exklusivkurse"
+                ]
+            ],
+            "resolverConfig" => [
+                "elementType" => "dataObject",
+                "dataObjectClassId" => "PartnerProfile",
+                "loadingStrategy" => [
+                    "type" => "id",
+                    "settings" => [
+                        "dataSourceIndex" => "0"
+                    ]
+                ],
+                "createLocationStrategy" => [
+                    "type" => "staticPath",
+                    "settings" => [
+                        "path" => "/Partner"
+                    ]
+                ],
+                "locationUpdateStrategy" => [
+                    "type" => "noChange"
+                ],
+                "publishingStrategy" => [
+                    "type" => "noChangeUnpublishNew"
+                ]
+            ],
+            "processingConfig" => [
+                "executionType" => "parallel",
+                "idDataIndex" => "0",
+                "doDeltaCheck" => TRUE,
+                "cleanup" => [
+                    "strategy" => "unpublish"
+                ]
+            ],
+            "mappingConfig" => [
+                [
+                    "label" => "CAS Partner ID",
+                    "dataSourceIndex" => [
+                        "0"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "PartnerID",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Public ID",
+                    "dataSourceIndex" => [
+                        "1"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "CASPublicID",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Key",
+                    "dataSourceIndex" => [
+                        "2"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "key",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Name",
+                    "dataSourceIndex" => [
+                        "3"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "Name",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Street",
+                    "dataSourceIndex" => [
+                        "6"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "Street",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Hausnummer",
+                    "dataSourceIndex" => [
+                        "7"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "Number",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "PLZ",
+                    "dataSourceIndex" => [
+                        "8"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "Zip",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Ort",
+                    "dataSourceIndex" => [
+                        "9"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "City",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Phone",
+                    "dataSourceIndex" => [
+                        "11"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "Telephone",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Email",
+                    "dataSourceIndex" => [
+                        "12"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "email",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Website",
+                    "dataSourceIndex" => [
+                        "13"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "Website",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "MainCategory",
+                    "dataSourceIndex" => [
+                        "15"
+                    ],
+                    "settings" => [
+                        "loadStrategy" => "attribute",
+                        "attributeDataObjectClassId" => "PartnerCategory",
+                        "attributeName" => "CASPartnerId",
+                        "attributeLanguage" => ""
+                    ],
+                    "transformationResultType" => "dataObject",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "PartnerCategoryPrimary",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+                        [
+                            "settings" => [
+                                "loadStrategy" => "attribute",
+                                "attributeDataObjectClassId" => "PartnerCategory",
+                                "attributeName" => "CASPartnerId",
+                                "attributeLanguage" => ""
+                            ],
+                            "type" => "loadDataObject"
+                        ]
+                    ]
+                ],
+                [
+                    "label" => "Country",
+                    "dataSourceIndex" => [
+                        "10"
+                    ],
+                    "settings" => [
+                        "original" => [
+                            "Deutschland",
+                            "Niederlande"
+                        ],
+                        "converted" => [
+                            "DE",
+                            "NL"
+                        ]
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "Country",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+                        [
+                            "settings" => [
+                                "original" => "Deutschland",
+                                "converted" => "DE"
+                            ],
+                            "type" => "conditionalConversion"
+                        ],
+                        [
+                            "settings" => [
+                                "original" => "Niederlande",
+                                "converted" => "NL"
+                            ],
+                            "type" => "conditionalConversion"
+                        ]
+                    ]
+                ],
+                [
+                    "label" => "HansefitCard",
+                    "dataSourceIndex" => [
+                        "16"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "HansefitCard",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Check-In With Card",
+                    "dataSourceIndex" => [
+                        "17"
+                    ],
+                    "transformationResultType" => "boolean",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "CheckInCard",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+                        [
+                            "type" => "boolean"
+                        ]
+                    ]
+                ],
+                [
+                    "label" => "Check-In With App",
+                    "dataSourceIndex" => [
+                        "18"
+                    ],
+                    "transformationResultType" => "boolean",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "CheckInApp",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+                        [
+                            "type" => "boolean"
+                        ]
+                    ]
+                ],
+                [
+                    "label" => "Twogether",
+                    "dataSourceIndex" => [
+                        "19"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "TwogetherProgram",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Startcode",
+                    "dataSourceIndex" => [
+                        "20"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "StartCode",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "Latitude",
+                    "dataSourceIndex" => [
+                        "4",
+                        "5"
+                    ],
+                    "transformationResultType" => "array",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "ContractServices",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "ConfigKeyCheckInApp",
+                    "dataSourceIndex" => [
+                        "21"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "ConfigCheckInApp",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ]
+            ],
+            "executionConfig" => [
+                "cronDefinition" => ""
+            ],
+            "workspaces" => [
+
+            ]
+        ],
+        "VoucherMain" => [
+            "general" => [
+                "active" => TRUE,
+                "type" => "dataImporterDataObject",
+                "name" => "VoucherMain",
+                "description" => "DON'T DELETE OR RENAME",
+                "path" => NULL
+            ],
+            "loaderConfig" => [
+                "type" => "asset",
+                "settings" => [
+                    "assetPath" => "/Voucher Uploads/Balloon.csv"
+                ]
+            ],
+            "interpreterConfig" => [
+                "type" => "csv",
+                "settings" => [
+                    "skipFirstRow" => TRUE,
+                    "delimiter" => ";",
+                    "enclosure" => "\"",
+                    "escape" => "\\"
+                ]
+            ],
+            "resolverConfig" => [
+                "elementType" => "dataObject",
+                "dataObjectClassId" => "Voucher",
+                "loadingStrategy" => [
+                    "type" => "id",
+                    "settings" => [
+                        "dataSourceIndex" => "0"
+                    ]
+                ],
+                "createLocationStrategy" => [
+                    "type" => "staticPath",
+                    "settings" => [
+                        "path" => "/Online+/Products/Balloon/Vouchers"
+                    ]
+                ],
+                "locationUpdateStrategy" => [
+                    "type" => "noChange"
+                ],
+                "publishingStrategy" => [
+                    "type" => "noChangePublishNew"
+                ]
+            ],
+            "processingConfig" => [
+                "executionType" => "sequential",
+                "idDataIndex" => "0",
+                "doDeltaCheck" => TRUE,
+                "cleanup" => [
+                    "strategy" => "delete"
+                ]
+            ],
+            "mappingConfig" => [
+                [
+                    "label" => "gutscheincode [0]",
+                    "dataSourceIndex" => [
+                        "0"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "VoucherCode",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ],
+                [
+                    "label" => "ablaufdatum [1]",
+                    "dataSourceIndex" => [
+                        "1"
+                    ],
+                    "settings" => [
+                        "format" => "Y-m-d"
+                    ],
+                    "transformationResultType" => "date",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "ExpirationDate",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+                        [
+                            "settings" => [
+                                "format" => "Y-m-d"
+                            ],
+                            "type" => "date"
+                        ]
+                    ]
+                ],
+                [
+                    "label" => "Key",
+                    "dataSourceIndex" => [
+                        "0"
+                    ],
+                    "transformationResultType" => "default",
+                    "dataTarget" => [
+                        "type" => "direct",
+                        "settings" => [
+                            "fieldName" => "key",
+                            "language" => ""
+                        ]
+                    ],
+                    "transformationPipeline" => [
+
+                    ]
+                ]
+            ],
+            "executionConfig" => [
+                "cronDefinition" => ""
+            ],
+            "workspaces" => [
+
+            ]
+        ]
+    ]
+];

@@ -1,0 +1,151 @@
+pimcore:
+    custom_report:
+        definitions:
+            eventReport:
+                name: eventReport
+                sql: ''
+                dataSourceConfig:
+                    -
+                        sql: "os.oo_id, op.Name , op.PartnerID ,  \n(length(os.Bookings) - length(replace(os.Bookings,',','')))-1 , \noc.CourseID , oc.o_key, DATE_FORMAT(FROM_UNIXTIME(os.CourseDate), '%%d.%%m.%Y') as CourseDate,  os.Duration, TRIM(both ',' from oc.level), oc2.o_key as 'Kurskategorie', \noc.ExclusiveCourse , os.Cancelled , os.Capacity "
+                        from: "object_singleevent os \nleft join object_course oc   \n\tON os.parentCourse__id = oc.oo_id\nleft join object_partnerprofile op\n\ton oc.partnerProfile__id = op.oo_id\nleft join  object_coursecategory oc2\n\ton find_in_set(oc2.oo_id, oc.MainCategory)"
+                        where: ''
+                        groupby: ''
+                        type: sql
+                columnConfiguration:
+                    -
+                        name: oo_id
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: 'Termin ID'
+                        columnAction: openObject
+                        id: extModel687-1
+                    -
+                        name: Name
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Partnername
+                        filter_drilldown: ''
+                        id: extModel687-2
+                    -
+                        name: PartnerID
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: 'Partner ID'
+                        filter: ''
+                        filter_drilldown: ''
+                        id: extModel687-3
+                    -
+                        name: CourseID
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: 'Kurs ID'
+                        id: extModel687-4
+                    -
+                        name: CourseDate
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Datum
+                        filter: ''
+                        displayType: text
+                        filter_drilldown: ''
+                        id: extModel687-5
+                    -
+                        name: Duration
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Dauer
+                        id: extModel687-6
+                    -
+                        name: 'TRIM(both '','' from oc.level)'
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Level
+                        id: extModel687-7
+                    -
+                        name: Kurskategorie
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: ''
+                        id: extModel687-8
+                    -
+                        name: o_key
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Kursname
+                        filter: ''
+                        displayType: ''
+                        filter_drilldown: ''
+                        id: extModel687-9
+                    -
+                        name: ExclusiveCourse
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Exklusivkurs
+                        filter: ''
+                        displayType: null
+                        filter_drilldown: ''
+                        columnAction: null
+                        id: extModel687-10
+                    -
+                        name: Cancelled
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Abgesagt
+                        filter: ''
+                        displayType: ''
+                        filter_drilldown: ''
+                        id: extModel687-11
+                    -
+                        name: Capacity
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: 'Verfügbare Plätze'
+                        id: extModel687-12
+                    -
+                        name: '(length(os.Bookings) - length(replace(os.Bookings,'','','''')))-1'
+                        display: true
+                        export: true
+                        order: false
+                        width: ''
+                        label: Buchungen
+                        id: extModel687-13
+                niceName: Terminbericht
+                group: Reports
+                groupIconClass: ''
+                iconClass: ''
+                menuShortcut: true
+                reportClass: ''
+                chartType: null
+                pieColumn: null
+                pieLabelColumn: null
+                xAxis: null
+                yAxis: {  }
+                modificationDate: 1647517833
+                creationDate: 1631278846
+                shareGlobally: true
+                sharedUserNames: {  }
+                sharedRoleNames: {  }

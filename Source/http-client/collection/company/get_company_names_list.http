@@ -1,0 +1,4 @@
+// @name Get Company Names list
+GET {{api_scheme}}{{api_host}}/api/companies/names
+Authorization: Bearer {{token}}
+Content-Type: application/json

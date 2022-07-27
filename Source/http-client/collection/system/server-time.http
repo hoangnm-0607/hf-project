@@ -1,0 +1,10 @@
+// @name Server Time
+GET {{api_scheme}}{{api_host}}/api/server-time
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

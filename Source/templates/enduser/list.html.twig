@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User List</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        .tr-style {
+            height: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <table style="width:100%">
+        <thead style="background-color: grey">
+        <tr class="tr-style" >
+            {% for title in header %}
+                <th>{{ title }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+            {% for user_data in user_list %}
+                <tr class="tr-style">
+                    {% for value in user_data %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

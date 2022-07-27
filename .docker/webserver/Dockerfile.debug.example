@@ -1,0 +1,157 @@
+# This Dockerfile provides a nginx server with debugging enabled.
+# DO NOT USE IN PRODUCTION! Makes server very slow.
+
+# Use case
+# Debug the nginx configuration (location directives).
+# This nginx gives you full verbose output of every rule that is processed (and much more).
+
+# How to use
+# There are two requirements to get debug output.
+#     - Install a nginx server with the "--with-debug" option (which this Dockerfile does).
+#     - Tell nginx to print logs at debug level.
+# To do the last, add the commands "error_log" (with level "debug") and "rewrite_log"
+# (with value "on") inside your nginx configuration.
+# http://nginx.org/en/docs/ngx_core_module.html#error_log
+# http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#rewrite_log
+
+# Environment to use
+# This Dockerfile fits perfectly as single Docker container next to an php-fpm container.
+# Should also be usable as replacement for every other nginx installation.
+
+# Code Source
+# https://gist.github.com/rahuljiresal/2f3cb86bad0f210141e634141ec7ecbd
+
+FROM alpine:latest
+
+LABEL maintainer="Luka Dschaak <l.dschaak@neusta.de>"
+
+RUN apk add --update ca-certificates
+
+ENV NGINX_VERSION 1.16.0
+
+ENV GPG_KEYS B0F4253373F8F6F510D42178520A9993A1C052F8
+ENV CONFIG "\
+	--prefix=/etc/nginx \
+	--sbin-path=/usr/sbin/nginx \
+	--modules-path=/usr/lib/nginx/modules \
+	--conf-path=/etc/nginx/nginx.conf \
+	--error-log-path=/var/log/nginx/error.log \
+	--http-log-path=/var/log/nginx/access.log \
+	--pid-path=/var/run/nginx.pid \
+	--lock-path=/var/run/nginx.lock \
+	--http-client-body-temp-path=/var/cache/nginx/client_temp \
+	--http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+	--http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+	--http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+	--http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+	--user=nginx \
+	--group=nginx \
+	--with-http_ssl_module \
+	--with-http_realip_module \
+	--with-http_addition_module \
+	--with-http_sub_module \
+	--with-http_dav_module \
+	--with-http_flv_module \
+	--with-http_mp4_module \
+	--with-http_gunzip_module \
+	--with-http_gzip_static_module \
+	--with-http_random_index_module \
+	--with-http_secure_link_module \
+	--with-http_stub_status_module \
+	--with-http_auth_request_module \
+	--with-http_xslt_module=dynamic \
+	--with-http_image_filter_module=dynamic \
+	--with-http_geoip_module=dynamic \
+	--with-http_perl_module=dynamic \
+	--with-threads \
+	--with-stream \
+	--with-stream_ssl_module \
+	--with-http_slice_module \
+	--with-mail \
+	--with-mail_ssl_module \
+	--with-file-aio \
+	--with-http_v2_module \
+	--with-ipv6 \
+	--with-debug \
+	"
+
+RUN apk --update upgrade \
+	&& apk add --no-cache --virtual .build-deps \
+		gcc \
+		libc-dev \
+		make \
+		openssl-dev \
+		pcre-dev \
+		zlib-dev \
+		linux-headers \
+		curl \
+		gnupg \
+		libxslt-dev \
+		gd-dev \
+		geoip-dev \
+		perl-dev \
+		bash \
+	&& curl -fSL http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o nginx.tar.gz \
+	&& curl -fSL http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc  -o nginx.tar.gz.asc \
+	&& export GNUPGHOME="$(mktemp -d)" \
+#	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$GPG_KEYS" \
+#	&& gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz \
+	&& rm -r "$GNUPGHOME" nginx.tar.gz.asc \
+	&& mkdir -p /usr/src \
+	&& tar -zxC /usr/src -f nginx.tar.gz \
+	&& rm nginx.tar.gz \
+	&& cd /usr/src/nginx-$NGINX_VERSION \
+	&& ./configure $CONFIG --with-debug \
+	&& make \
+	&& mv objs/nginx objs/nginx-debug \
+	&& mv objs/ngx_http_xslt_filter_module.so objs/ngx_http_xslt_filter_module-debug.so \
+	&& mv objs/ngx_http_image_filter_module.so objs/ngx_http_image_filter_module-debug.so \
+	&& mv objs/ngx_http_geoip_module.so objs/ngx_http_geoip_module-debug.so \
+	&& mv objs/ngx_http_perl_module.so objs/ngx_http_perl_module-debug.so \
+	&& ./configure $CONFIG \
+	&& make \
+	&& make install \
+	&& rm -rf /etc/nginx/html/ \
+	&& mkdir /etc/nginx/conf.d/ \
+	&& mkdir -p /usr/share/nginx/html/ \
+	&& install -m644 html/index.html /usr/share/nginx/html/ \
+	&& install -m644 html/50x.html /usr/share/nginx/html/ \
+	&& install -m755 objs/nginx-debug /usr/sbin/nginx-debug \
+	&& install -m755 objs/ngx_http_xslt_filter_module-debug.so /usr/lib/nginx/modules/ngx_http_xslt_filter_module-debug.so \
+	&& install -m755 objs/ngx_http_image_filter_module-debug.so /usr/lib/nginx/modules/ngx_http_image_filter_module-debug.so \
+	&& install -m755 objs/ngx_http_geoip_module-debug.so /usr/lib/nginx/modules/ngx_http_geoip_module-debug.so \
+	&& install -m755 objs/ngx_http_perl_module-debug.so /usr/lib/nginx/modules/ngx_http_perl_module-debug.so \
+	&& ln -s ../../usr/lib/nginx/modules /etc/nginx/modules \
+	&& strip /usr/sbin/nginx* \
+	&& strip /usr/lib/nginx/modules/*.so \
+	&& runDeps="$( \
+		scanelf --needed --nobanner /usr/sbin/nginx /usr/lib/nginx/modules/*.so \
+			| awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+			| sort -u \
+			| xargs -r apk info --installed \
+			| sort -u \
+	)" \
+	&& apk add --virtual .nginx-rundeps $runDeps \
+#	&& apk del .build-deps \
+	&& rm -rf /usr/src/nginx-$NGINX_VERSION \
+	&& apk add --no-cache gettext
+
+RUN rm -rf /var/cache/apk/* && rm -rf /tmp/*
+
+COPY config/nginx.conf /etc/nginx/
+COPY config/vhost.conf /etc/nginx/conf.d/default.conf
+COPY config/upstream.conf /etc/nginx/conf.d/
+
+RUN mkdir -p /etc/nginx/ssl/
+COPY ssl/nginx.crt /etc/nginx/ssl/
+COPY ssl/nginx.key /etc/nginx/ssl/
+
+RUN addgroup -S www-data
+RUN adduser -D -g '' -G www-data www-data
+
+RUN mkdir /var/cache/nginx
+RUN chown -R www-data:www-data /var/cache/nginx
+
+CMD ["nginx"]
+
+EXPOSE 80 443

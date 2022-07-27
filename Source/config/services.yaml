@@ -1,0 +1,42 @@
+parameters:
+    secret: sXvOByZY0yVwUV5+n8TyPfWek0tOlE9HTBKVD/sTPZY=
+    cas.api.system_user: system
+    cas.api.system_password: '%env(CAS_SYSTEM_API_PASSWORD)%'
+    api_gateway.studio_list_id: '%env(API_GATEWAY_STUDIO_LIST_ID)%'
+    is_debug: '%env(bool:APP_DEBUG)%'
+    default_locale: de
+    locales:
+        - en
+        - de
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+
+
+    assets_s3:
+        class: 'Aws\S3\S3Client'
+        arguments:
+            -  endpoint: 'https://s3.eu-central-1.amazonaws.com'
+               region: '%env(AWS_REGION)%'
+               version: 'latest'
+
+when@dev:
+    services:
+        # Override S3 client configuration to use Localstack
+        assets_s3:
+            class: 'Aws\S3\S3Client'
+            arguments:
+                - endpoint: 'https://s3.eu-central-1.amazonaws.com'
+                  region: '%env(AWS_REGION)%'
+                  version: 'latest'
+                  credentials:
+                      key: '%env(AWS_ACCESS_KEY_ID)%'
+                      secret: '%env(AWS_SECRET_ACCESS_KEY)%'

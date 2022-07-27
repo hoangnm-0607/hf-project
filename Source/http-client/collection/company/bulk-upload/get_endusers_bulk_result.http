@@ -1,0 +1,10 @@
+// @name Get Company EndUsers Bulk file
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-upload/{{confirmationId}}/result
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

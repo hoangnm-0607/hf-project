@@ -1,0 +1,239 @@
+imports:
+    - { resource: services.yaml }
+    - { resource: firebase.yaml }
+    - { resource: 'dev/' }
+
+pimcore:
+    assets:
+        frontend_prefixes:
+            # Prefix used for the original asset files
+            source: '%env(PIMCORE_DAM_S3_FRONTEND_PREFIX_SOURCE)%'
+            # Prefix used for all generated image & video thumbnails
+            thumbnail: '%env(PIMCORE_DAM_S3_FRONTEND_PREFIX_THUMBNAIL)%'
+            # Prefix used for the deferred thumbnail placeholder path.
+            # Thumbnails are usually generated on demand (if not configured differently), this
+            # prefix is used for thumbnails which were not yet generated and therefore are not
+            # available on the thumbnail storage yet. Usually it's not necessary to change this config.
+            thumbnail_deferred: '%env(PIMCORE_DAM_S3_FRONTEND_PREFIX_THUMBNAIL_DEFERRED)%'
+
+    # IMPORTANT Notice!
+# Following there are only some examples listed, for a full list of possible options, please run the following command:
+# ./bin/console debug:config pimcore
+# you can also filter them by path, eg.
+# ./bin/console debug:config pimcore assets
+# or even more specific:
+# ./bin/console debug:config pimcore assets.image
+
+
+#### TRANSLATIONS
+#    translations:
+#        case_insensitive: true
+
+#### FEATURE FLAGS
+#    flags:
+#        zend_date: true
+
+#### CLASS OVERRIDES EXAMPLES
+    models:
+        class_overrides:
+            'Pimcore\Model\DataObject\PartnerProfile': 'App\Entity\PartnerProfile'
+            'Pimcore\Model\DataObject\Company': 'App\Entity\Company'
+            'Pimcore\Model\DataObject\CourseCategory': 'App\Entity\CourseCategory'
+            'Pimcore\Model\DataObject\PartnerCategory': 'App\Entity\PartnerCategory'
+            'Pimcore\Model\DataObject\Course': 'App\Entity\Courses'
+            'Pimcore\Model\DataObject\SingleEvent': 'App\Entity\SingleEvent'
+            'Pimcore\Model\DataObject\Booking': 'App\Entity\Booking'
+            'Pimcore\Model\DataObject\OnlineProduct': 'App\Entity\OnlineProduct'
+            'Pimcore\Model\DataObject\Voucher': 'App\Entity\Voucher'
+            'Pimcore\Model\DataObject\ServicePackage': 'App\Entity\ServicePackage'
+            'Pimcore\Model\DataObject\EndUser': 'App\Entity\EndUser'
+
+
+#### CUSTOM DOCUMENT EDITABLES
+#    documents:
+#        allow_trailing_slash: 'yes'
+#        generate_preview: false
+#        tags:
+#            map:
+#                markdown: \App\Model\Document\Tag\Markdown
+
+
+#### CUSTOM OBJECT DATA TYPES
+#    objects:
+#        class_definitions:
+#            data:
+#                map:
+#                  myDataType: \App\Model\DataObject\Data\MyDataType
+
+
+#### ASSET CUSTOM SETTINGS
+#    assets:
+#        icc_rgb_profile: ''
+#        icc_cmyk_profile: ''
+#        versions:
+#            use_hardlinks: false
+#        image:
+#            low_quality_image_preview:
+#                enabled: false
+#                generator: imagick
+#            thumbnails:
+#                webp_auto_support: false
+
+
+#### SYSTEM SETTINGS
+
+#    general:
+#        timezone: Europe/Berlin
+#        path_variable: ''
+#        instance_identifier: ''
+    full_page_cache:
+#        enabled: false
+#        lifetime: null
+#        exclude_cookie: ''
+        exclude_patterns: '@^/api/@'
+#    httpclient:
+#        adapter: Socket # use 'Proxy' for custom proxy configuration
+#        proxy_host: ''
+#        proxy_port: ''
+#        proxy_user: ''
+#        proxy_pass: ''
+    email:
+        sender:
+            name: 'Hansefit Kursmanager'
+            email: 'pimcore-noreply@hansefit.de'
+#        return:
+#            name: ''
+#            email: ''
+#    newsletter:
+#        use_specific: false # set true to use the following options for newsletter delivery
+#        sender:
+#            name: ''
+#            email: ''
+#        return:
+#            name: ''
+#            email: ''
+
+#    applicationlog:
+#        mail_notification:
+#            send_log_summary: false
+#            filter_priority: null
+#            mail_receiver: ''
+#        archive_treshold: '30'
+#        archive_alternative_database: ''
+
+#### SYMFONY OVERRIDES
+framework:
+    default_locale: '%default_locale%'
+    serializer: { enable_annotations: true }
+
+#### SYMFONY MAILER TRANSPORTS
+    mailer:
+        transports:
+            main: smtp://pimcore-noreply@hansefit.de:Xog00816@smtp.office365.com:587
+#            pimcore_newsletter: smtp://user:pass@smtp.example.com:port
+
+doctrine_migrations:
+    migrations_paths:
+        'App\Migrations': '%kernel.project_dir%/src/Migrations'
+
+doctrine:
+    orm:
+        auto_generate_proxy_classes: '%kernel.debug%'
+        auto_mapping: true
+    dbal:
+        server_version: 'mariadb-10.5.5'
+
+advanced_object_search:
+    # Prefix for index names
+    index_name_prefix: 'advanced_object_search_'
+
+    # List of elasticsearch hosts
+    es_hosts:
+        - '%env(AES_SEARCH_ENDPOINT)%'
+
+api_platform:
+    title: 'Hansefit Kursmanager API'
+    version: '0.0.12'
+    show_webby: false
+    enable_re_doc: false
+    formats:
+        json: [ 'application/json' ]
+        xml:  [ 'application/xml', 'text/xml']
+        html: [ 'text/html' ]
+    mapping:
+        paths: ['%kernel.project_dir%/src/Entity', '%kernel.project_dir%/src/Controller/System']
+    patch_formats:
+        json: ['application/merge-patch+json']
+    swagger:
+        versions: [3]
+        api_keys:
+            apiKey:
+                name: "Authorization"
+                type: "header"
+
+    exception_to_status:
+        App\Exception\AlreadyBookedException: 403
+        App\Exception\AlreadyCancelledException: 403
+        App\Exception\AlreadyCheckedInException: 403
+        App\Exception\AlreadyPublishedException: 403
+        App\Exception\AlreadyArchivedException: 403
+        App\Exception\BookingNotSavedException: 403
+        App\Exception\EventTimeConflictException: 403
+        App\Exception\ExistingEventException: 403
+        App\Exception\TerminationReachedException: 403
+        App\Exception\CourseManagerInactiveException: 403
+        App\Exception\UnsupportedVideoTypeException: 403
+        App\Exception\InvalidUrlException: 403
+        App\Exception\NegativeCapacityException: 403
+        App\Exception\EventIsOverException: 409
+        App\Exception\MaximumCapacityReachedException: 409
+        App\Exception\ObjectNotFoundException: 404
+        App\Exception\PartnerRoleStatusNotFoundException: 404
+        App\Exception\TokenIdMismatchException: 401
+        App\Exception\InvalidPartnerException: 406
+        App\Exception\DublicateNameException: 409
+        App\Exception\JwtException: 401
+        App\Exception\UnknownServiceStatus: 400
+        App\Exception\AlreadyActiveVoucherException: 400
+        App\Exception\UnexpectedChildException: 500
+        App\Exception\NoVoucherLeftException: 500
+        Firebase\JWT\ExpiredException: 401
+        Firebase\JWT\SignatureInvalidException: 401
+
+flysystem:
+    storages:
+        pimcore.asset.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'assets_s3'
+                bucket: '%env(PIMCORE_DAM_S3_BUCKET)%'
+                prefix: assets
+        pimcore.thumbnail.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'assets_s3'
+                bucket: '%env(PIMCORE_DAM_S3_BUCKET)%'
+                prefix: assets_thumbnails
+        pimcore.asset_cache.storage:
+            adapter: 'aws'
+            visibility: private
+            options:
+                client: 'assets_s3'
+                bucket: '%env(PIMCORE_DAM_S3_BUCKET)%'
+                prefix: assets_cache
+        pimcore.version.storage:
+            adapter: 'aws'
+            visibility: private
+            options:
+                client: 'assets_s3'
+                bucket: '%env(PIMCORE_DAM_S3_BUCKET)%'
+                prefix: versions
+        pimcore.recycle_bin.storage:
+            adapter: 'aws'
+            visibility: private
+            options:
+                client: 'assets_s3'
+                bucket: '%env(PIMCORE_DAM_S3_BUCKET)%'
+                prefix: recyclebin

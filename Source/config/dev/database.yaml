@@ -1,0 +1,12 @@
+doctrine:
+    dbal:
+        connections:
+            default:
+                host: '%env(PIMCORE_DATABASE_HOST)%'
+                port: '%env(PIMCORE_DATABASE_PORT)%'
+                user: '%env(PIMCORE_DATABASE_USER)%'
+                password: '%env(PIMCORE_DATABASE_PASSWORD)%'
+                dbname: '%env(PIMCORE_DATABASE_NAME)%'
+                mapping_types:
+                    enum: string
+                    bit: boolean

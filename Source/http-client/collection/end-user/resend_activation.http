@@ -1,0 +1,10 @@
+// @name Resend Activation EndUser
+POST {{api_scheme}}{{api_host}}/api/endusers/{{enduserId}}/resend-activation
+Authorization: Bearer {{token}}
+Content-Type: application/pdf
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

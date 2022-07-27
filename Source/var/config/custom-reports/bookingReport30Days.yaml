@@ -1,0 +1,121 @@
+pimcore:
+    custom_report:
+        definitions:
+            bookingReport30Days:
+                name: bookingReport30Days
+                sql: ''
+                dataSourceConfig:
+                    -
+                        sql: "DATE_FORMAT(FROM_UNIXTIME(ob.o_creationDate), '%%d.%%m.%Y') as o_creationDate,\nDATE_FORMAT(FROM_UNIXTIME(ob.o_creationDate), '%%H:%%i:%s') as createionTime,\nop.PartnerID, \nop.Name, \nos.oo_id, \noc.o_key,\nDATE_FORMAT(FROM_UNIXTIME(os.CourseDate), '%%d.%%m.%Y') as CourseDate, \nob.BookingId, \nDATE_FORMAT(FROM_UNIXTIME(ob.CheckIn), '%%d.%%m.%Y') as CheckIn,\nDATE_FORMAT(FROM_UNIXTIME(ob.CheckIn),'%%H:%%i:%s') as CheckInTime, \nob.UserCancelled"
+                        from: "object_booking ob\nleft join object_singleevent os \n\ton ob.Event__id = os.oo_id \nleft join object_course oc \n\ton os.parentCourse__id = oc.oo_id \nleft join object_partnerprofile op \n\ton oc.partnerProfile__id = op.oo_id "
+                        where: "from_unixtime(ob.o_creationDate) > date_sub(now(), interval 30 DAY) \nand from_unixtime(ob.o_creationDate) <= now()"
+                        groupby: ''
+                        type: sql
+                columnConfiguration:
+                    -
+                        name: PartnerID
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: ''
+                        id: extModel611-1
+                    -
+                        name: Name
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Partnername
+                        id: extModel611-2
+                    -
+                        name: o_key
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Kursname
+                        id: extModel611-3
+                    -
+                        name: oo_id
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: 'Kurs ID'
+                        id: extModel611-4
+                    -
+                        name: CourseDate
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: ''
+                        displayType: ''
+                        id: extModel611-5
+                    -
+                        name: o_creationDate
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Buchungsdatum
+                        displayType: ''
+                        id: extModel611-6
+                    -
+                        name: createionTime
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: Buchungszeit
+                        id: extModel611-10
+                    -
+                        name: BookingId
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: ''
+                        id: extModel611-7
+                    -
+                        name: CheckIn
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: ''
+                        displayType: ''
+                        id: extModel611-8
+                    -
+                        name: CheckInTime
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: CheckInzeit
+                        id: extModel611-11
+                    -
+                        name: UserCancelled
+                        display: true
+                        export: true
+                        order: true
+                        width: ''
+                        label: ''
+                        id: extModel611-9
+                niceName: 'Buchungen (30 Tage)'
+                group: Reports
+                groupIconClass: ''
+                iconClass: ''
+                menuShortcut: true
+                reportClass: ''
+                chartType: null
+                pieColumn: null
+                pieLabelColumn: null
+                xAxis: null
+                yAxis: {  }
+                modificationDate: 1647519065
+                creationDate: 1631525626
+                shareGlobally: true
+                sharedUserNames: {  }
+                sharedRoleNames: {  }

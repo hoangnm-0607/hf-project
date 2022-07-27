@@ -1,0 +1,110 @@
+### Upload Company EndUsers file
+POST {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-upload
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="users.csv"
+Content-Type: text/csv
+
+< ./../resources/files/users.csv
+--WebAppBoundary--
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    if (200 === response.status || 201 === response.status) {
+        client.global.set("confirmationId", response.body.confirmationId);
+    }
+%}
+
+### Cancel Company EndUsers file
+DELETE {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-upload/{{confirmationId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 204, "Response status is not 204");
+    });
+%}
+
+### Get Company EndUsers Bulk file
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-upload/{{confirmationId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 404, "Response status is not 404");
+    });
+%}
+
+### Upload Company EndUsers file 2
+POST {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-upload
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="users.csv"
+Content-Type: text/csv
+
+< ./../resources/files/users.csv
+--WebAppBoundary--
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    if (200 === response.status || 201 === response.status) {
+        client.global.set("confirmationId", response.body.confirmationId);
+    }
+%}
+
+### Get Company EndUsers Bulk file 2
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-upload/{{confirmationId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Get Company EndUsers Bulk List
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-upload/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Server Time
+GET {{api_scheme}}{{api_host}}/api/server-time
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Create Company EndUsers (bin/console messenger:consume sqs_aws_fifo)
+PUT {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-upload/{{confirmationId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+

@@ -1,0 +1,3 @@
+// @name Get Company Bulk template for EndUsers file
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/bulk-template
+Authorization: Bearer {{token}}

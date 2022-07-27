@@ -1,0 +1,14 @@
+// @name Update EndUser
+PATCH {{api_scheme}}{{api_host}}/api/endusers/{{enduserId}}
+Authorization: Bearer {{token}}
+Content-Type: application/merge-patch+json
+
+{
+    "firstName": "Jacky"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

@@ -1,0 +1,18 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+{{  pimcore_wysiwyg("generalContent", {
+    "height": 200
+})
+}}
+
+
+    <p>{{ company_name }} </p>
+    <p>{{ activation_key }} </p>
+    <p>{{ first_name }} </p>
+    <p>{{ last_name }} </p>
+    <p><img src="{{ qr_code.getDataUri }}"></p>
+</body>
+</html>

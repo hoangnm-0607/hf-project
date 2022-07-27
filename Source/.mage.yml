@@ -1,0 +1,82 @@
+x-deployment: &deployment
+    exclude:
+        # excludes because of they're shared
+        - var/config/system.php
+        - var/email
+        - var/logs
+        - var/recyclebin
+        - var/sessions
+        - var/tmp
+        - var/versions
+        - web/var
+        - web/install.php
+        # excludes because of they should be generated new automatically
+        - var/cache
+        # excludes to reduce transfer volume
+        - tests
+    pre-deploy:
+    on-deploy:
+        - fs/link: { from: '../../../../shared/var/classes/DataObject', to: 'var/classes/DataObject'}
+        - fs/link: { from: '../../../../shared/config/local/database.yaml', to: 'config/local/database.yaml'}
+        - fs/link: { from: '../../../../shared/var/config/system.yml', to: 'var/config/system.yml'}
+        - fs/link: { from: '../../../shared/var/email', to: 'var/email'}
+        - fs/link: { from: '../../../shared/var/config', to: 'var/config'}
+        - fs/link: { from: '../../../shared/var/logs', to: 'var/logs'}
+        - fs/link: { from: '../../../shared/var/recyclebin', to: 'var/recyclebin'}
+        - fs/link: { from: '../../../shared/var/sessions', to: 'var/sessions'}
+        - fs/link: { from: '../../../shared/var/tmp', to: 'var/tmp'}
+        - fs/link: { from: '../../../shared/var/versions', to: 'var/versions'}
+        - fs/link: { from: '../../../shared/public/var', to: 'public/var'}
+        - fs/link: { from: '../../shared/.env', to: '.env'}
+    on-release:
+    post-release:
+    post-deploy:
+
+x-app-docker-post-release: &docker-post-release
+    - exec: { cmd: 'cd ../../.. && docker-compose restart php', desc: 'Restart PHP-Docker to clear opcache'}
+    - exec: { cmd: 'cd ../../.. && docker-compose exec -T php bin/console pimcore:deployment:classes-rebuild -c', desc: 'Rebuild classes, create'}
+    - exec: { cmd: 'cd ../../.. && docker-compose exec -T php bin/console pimcore:deployment:classes-rebuild -d', desc: 'Rebuild classes, delete'}
+    - exec: { cmd: 'cd ../../.. && docker-compose exec -T php bin/console assets:install --symlink public', desc: 'Install assets'}
+    - exec: { cmd: 'cd ../../.. && docker-compose exec -T php bin/console cache:clear', desc: 'Clearing cache'}
+
+x-app-nis-post-release: &nis-post-release
+    - exec: { cmd: 'sudo /bin/systemctl restart php7.4-fpm', desc: 'Restart php-fpm for clearing Opcache' }
+    - exec: { cmd: 'cd /srv/www/projects/hansefit/current && /usr/bin/php bin/console pimcore:migrations:migrate', desc: 'Migrate migrations'}
+    - exec: { cmd: 'cd /srv/www/projects/hansefit/current && /usr/bin/php bin/console cache:clear', desc: 'Clearing cache'}
+    - exec: { cmd: 'cd /srv/www/projects/hansefit/current && /usr/bin/php bin/console pimcore:deployment:classes-rebuild -c', desc: 'Rebuild classes'}
+    - exec: { cmd: 'cd /srv/www/projects/hansefit/current && /usr/bin/php bin/console assets:install --symlink public', desc: 'Install assets'}
+
+magephp:
+    log_dir: .magallanes
+
+    environments:
+
+        itest:
+            <<: *deployment
+            user: hansefit
+            host_path: /home/hansefit/www/Source
+            releases: 1
+            hosts:
+                - 172.31.193.158
+            post-release:
+                <<: *docker-post-release
+
+        dmz:
+            <<: *deployment
+            user: hansefit
+            host_path: /home/hansefit/www/Source
+            releases: 2
+            hosts:
+                - 10.213.165.158
+            post-release:
+                <<: *docker-post-release
+
+        prod:
+            <<: *deployment
+            user: pimcore
+            host_path: /srv/www/projects/hansefit
+            releases: 3
+            hosts:
+                - 10.213.165.124
+            post-release:
+                <<: *nis-post-release

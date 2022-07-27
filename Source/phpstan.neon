@@ -1,0 +1,17 @@
+includes:
+    - 'vendor/phpstan/phpstan-phpunit/extension.neon'
+    - 'vendor/phpstan/phpstan-phpunit/rules.neon'
+    - 'vendor/phpstan/phpstan-symfony/extension.neon'
+
+parameters:
+    level: 9
+    phpVersion: 80019
+    editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
+    excludePaths:
+        - '%rootDir%/../../../src/DataFixtures/*'
+        - '%rootDir%/../../../src/Migrations/*'
+    fileExtensions:
+        - 'php'
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    treatPhpDocTypesAsCertain: false

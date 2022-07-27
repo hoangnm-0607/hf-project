@@ -1,0 +1,4 @@
+// @name View Partner List
+GET {{api_scheme}}{{api_host}}/api/partners
+Authorization: Bearer {{token}}
+Content-Type: application/json

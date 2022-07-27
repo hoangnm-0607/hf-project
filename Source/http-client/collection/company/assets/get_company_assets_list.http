@@ -1,0 +1,4 @@
+// @name Get Company Assets list
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/assets?language=en
+Authorization: Bearer {{token}}
+Content-Type: application/json

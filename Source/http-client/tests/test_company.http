@@ -1,0 +1,53 @@
+### View Company
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}
+Authorization: Bearer {{token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### View EndUser List JSON
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/list?language=en
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### View EndUser List CSV
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/list?language=en
+Authorization: Bearer {{token}}
+Content-Type: application/csv
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### View EndUser List PDF
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/endusers/list?language=en
+Authorization: Bearer {{token}}
+Content-Type: application/pdf
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Get Company Names list
+GET {{api_scheme}}{{api_host}}/api/companies/names
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

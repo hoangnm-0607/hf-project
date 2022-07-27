@@ -1,0 +1,427 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+        bind:
+            $casSystemApiUser:  '%cas.api.system_user%'
+            $casSystemApiPassword:  '%cas.api.system_password%'
+            $awsCognitoJwksCcpLocalKey: '%env(resolve:AWSCOGNITO_JWKS_CCP_LOCAL)%'
+            $awsCognitoJwksVppLocalKey: '%env(resolve:AWSCOGNITO_JWKS_VPP_LOCAL)%'
+            $awsCognitoJwksLocalKey: '%env(resolve:AWSCOGNITO_JWKS_LOCAL)%'
+            $awsUserPoolPartner: '%env(USERPOOL_PARTNER)%'
+            $awsUserPoolExcercising: '%env(USERPOOL_EXCERCISING)%'
+            $awsUserPoolCompany: '%env(USERPOOL_COMPANY)%'
+            $locales: '%locales%'
+            $projectDir: '%kernel.project_dir%'
+            $defaultLocale: '%default_locale%'
+
+    _instanceof:
+
+        #
+        # API - Populators by tag
+        #
+
+        App\DataTransformer\Populator\Courses\CoursesOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.courses' ]
+
+        App\DataTransformer\Populator\CoursesVpp\CoursesVppOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.coursesvpp' ]
+
+        App\DataTransformer\Populator\CourseCategory\CourseCategoryOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.coursecategory' ]
+
+        App\DataTransformer\Populator\PartnerCategory\PartnerCategoryOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.partnercategory' ]
+
+        App\DataTransformer\Populator\Events\EventsOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.events' ]
+
+        App\DataTransformer\Populator\EventsVpp\EventsVppOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.eventsvpp' ]
+
+        App\DataTransformer\Populator\Bookings\BookingsInputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.bookings.input' ]
+
+        App\DataTransformer\Populator\Bookings\BookingsOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.bookings.output' ]
+
+        App\DataTransformer\Populator\PartnerProfile\AssetsVppOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.assets.output' ]
+
+        App\DataTransformer\Populator\Bookings\BookingsVppOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.bookingsvpp.output' ]
+
+        App\DataTransformer\Populator\OnlinePlus\ProductOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.onlineplus.product.output' ]
+
+        App\DataTransformer\Populator\Dashboard\DashboardStatsOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.dashboard.stats.output' ]
+
+        App\DataTransformer\Populator\Company\CompanyOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.company.output' ]
+
+        App\DataTransformer\Populator\EndUser\EndUserOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.enduser.output' ]
+
+        App\DataTransformer\Populator\EndUser\EndUserListOutputPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.enduser_list.output' ]
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    App\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+
+    #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    App\Command\:
+        resource: '../../Command/*'
+        tags: ['console.command']
+
+    App\DataProvider\:
+        resource: '../../DataProvider'
+
+    App\DataTransformer\:
+        resource: '../../DataTransformer'
+
+    App\Factory\:
+        resource: '../../Factory'
+
+    App\Service\:
+        resource: '../../Service'
+
+    App\DataPersister\:
+        resource: '../../DataPersister'
+
+    App\Dto\:
+        resource: '../../Dto'
+
+    App\Repository\:
+        resource: '../../Repository'
+
+    App\Security\:
+        resource: '../../Security'
+
+    App\MessageHandler\:
+        resource: '../../MessageHandler'
+
+    App\Validator\:
+        resource: '../../Validator'
+
+    #
+    # EventListners
+    #
+
+    App\EventListener\:
+        resource: '../../EventListener/'
+
+    App\EventListener\CourseAssetUploadListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.asset.resolve-upload-target, method: resolveCourseUpload }
+
+    App\EventListener\CourseDeletionListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.deleteInfo, method: checkDeletion }
+
+    App\EventListener\CourseCreationListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: setCourseId }
+
+    App\EventListener\CourseUpdateListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: unpublishEventsWhenCourseIsUnpublished }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: checkIfCoursesMayBeRenamed }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: setPartnerProfile }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: checkIfParentPartnerProfileIsPublished }
+
+    App\EventListener\DataObjectCreationListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.preAdd, method: checkCreatability }
+
+    App\EventListener\SingleEventDeletionListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.deleteInfo, method: checkDeletion }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preDelete, method: updateModificationDateOfParentCourse }
+
+    App\EventListener\ExclusiveCourseListener:
+        arguments:
+            - '@pimcore_admin.security.user_loader'
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.dataobject.get.preSendData, method: checkPermissions }
+
+    App\EventListener\PartnerProfileUpdateListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: checkForCasPublicId }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: unpublishCoursesWhenProfileUnpublished }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: geocodeAddress }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: checkUpdateAllowed }
+            - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: getCasDataOnPublish }
+            - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: syncToCas }
+            - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: flushApiGateway }
+
+
+    App\EventListener\ProductsCreationListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.preAdd, method: createAndSetCSVAsset }
+            - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: cloneImportConfig }
+
+    App\EventListener\VoucherAssetUpdateListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.asset.postUpdate, method: triggerImportWhenAssetUpdated }
+
+    App\EventListener\VoucherCreationListener:
+        tags:
+            - { name: kernel.event_listener, event: Pimcore\Bundle\DataImporterBundle\Event\DataObject\PreSaveEvent, method: validateVoucherData }
+
+    App\EventListener\SingleEventUpdateListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: checkIfCancellable }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: checkIfDataModificationDateHasToBeChanged }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: checkIfParentCourseIsPublished }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: checkIfUnpublishable }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: modifyEventKey }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: setOrUpdateWeekdayAndStartTimestamp }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: adjustAvailableCapacity }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: checkPartnerTerminationDate }
+
+    App\EventListener\AssetUploadListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.asset.resolve-upload-target, method: resolveUpload }
+
+    App\EventListener\PartnerProfileCreateListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: createObjectFolders }
+
+    App\EventListener\CompanyCreateListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: createObjectFolders }
+
+    App\EventListener\EndUserCreateListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: createAssetFolders }
+
+    App\EventListener\PartnerProfileDeletionListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.deleteInfo, method: checkDeletion }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preDelete, method: deleteProfileOwnedAssetFolder }
+
+    App\EventListener\PdoInitializerListener:
+        tags:
+            - { name: doctrine.event_listener, event: postConnect }
+
+
+    App\EventListener\LoginListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.login.failed, method: onAdminLoginFailed }
+            - { name: kernel.event_listener, event: pimcore.admin.login.credentials, method: onAdminLoginCredentials }
+
+    App\EventListener\AdminOpenDialogListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.resolve.element, method: resolveElement }
+
+    #
+    # API - DataTransformer
+    #
+
+    App\DataTransformer\PartnerProfileVppInputDataTransformer: ~
+
+    App\DataTransformer\CoursesVppAddInputDataTransformer: ~
+    App\DataTransformer\EventsVppAddInputDataTransformer: ~
+    App\DataTransformer\EventsVppUpdateInputDataTransformer: ~
+
+    App\DataTransformer\PartnerProfileVppOutputDataTransformer:
+        arguments:
+            $populators:
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileBaseDataOutputPopulator'
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileCategoryOutputPopulator'
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileVppOutputPopulator'
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileOpeningHoursPopulator'
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileVppServicesOutputPopulator'
+
+    App\DataTransformer\DatedPartnerProfileOutputDataTransformer:
+        arguments:
+            $populators:
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileAssetsOutputPopulator'
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileCategoryOutputPopulator'
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileOpeningHoursPopulator'
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileOutputPopulator'
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileBaseDataOutputPopulator'
+                - '@App\DataTransformer\Populator\PartnerProfile\PartnerProfileServicesOutputPopulator'
+
+    App\DataTransformer\DatedCoursesOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.courses'
+
+    App\DataTransformer\CoursesVppOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.coursesvpp'
+
+    App\DataTransformer\CourseCategoryOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.coursecategory'
+
+    App\DataTransformer\PartnerCategoryOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.partnercategory'
+
+    App\DataTransformer\SingleEventOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.events'
+
+    App\DataTransformer\EventVppOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.eventsvpp'
+
+    App\DataTransformer\BookingsInputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.bookings.input'
+
+    App\DataTransformer\BookingsOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.bookings.output'
+
+    App\DataTransformer\AssetsVppOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.assets.output'
+
+    App\DataTransformer\BookingsVppOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.bookingsvpp.output'
+
+    App\DataTransformer\OnlinePlus\ProductOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.onlineplus.product.output'
+
+    App\DataTransformer\DashboardStatsOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.dashboard.stats.output'
+
+    App\DataTransformer\Company\CompanyOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.company.output'
+
+    App\DataTransformer\EndUser\EndUserOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.enduser.output'
+
+    App\DataTransformer\EndUser\EndUserListOutputDataTransformer:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.enduser_list.output'
+
+    #
+    # API - DataProvider
+    #
+
+    App\DataProvider\PartnerProfileCollectionDataProvider:
+        arguments:
+            $itemsPerPage: '%api_platform.collection.pagination.items_per_page%'
+        tags: [ { name: 'api_platform.collection_data_provider' } ]
+
+    App\DataProvider\CourseCategoryCollectionDataProvider:
+        arguments:
+            $itemsPerPage: '%api_platform.collection.pagination.items_per_page%'
+        tags: [ { name: 'api_platform.collection_data_provider' } ]
+
+    App\DataProvider\PartnerCategoryCollectionDataProvider:
+        arguments:
+            $itemsPerPage: '%api_platform.collection.pagination.items_per_page%'
+        tags: [ { name: 'api_platform.collection_data_provider' } ]
+
+    App\DataProvider\CoursesCollectionDataProvider:
+        arguments:
+            $itemsPerPage: '%api_platform.collection.pagination.items_per_page%'
+        tags: [ { name: 'api_platform.collection_data_provider' } ]
+
+    App\DataProvider\CoursesVppCollectionDataProvider:
+        arguments:
+            $itemsPerPage: '%api_platform.collection.pagination.items_per_page%'
+        tags: [ { name: 'api_platform.collection_data_provider' } ]
+
+    App\DataProvider\AvailabilityCollectionDataProvider:
+        arguments:
+            $itemsPerPage: '%api_platform.collection.pagination.items_per_page%'
+        tags: [ { name: 'api_platform.collection_data_provider' } ]
+
+    App\DataProvider\EventsVppCollectionDataProvider:
+        arguments:
+            $itemsPerPage: 10
+        tags: [ { name: 'api_platform.collection_data_provider' } ]
+
+    App\DataProvider\Company\CompanyEndUserListCollectionProvider:
+        arguments:
+            $itemsPerPage: '%api_platform.collection.pagination.items_per_page%'
+        tags: [ { name: 'api_platform.collection_data_provider' } ]
+
+    App\DataProvider\AvailabilityItemDataProvider: ~
+    App\DataProvider\BookingItemDataProvider: ~
+    App\DataProvider\CoursesVppItemDataProvider: ~
+    App\DataProvider\PartnerProfileItemDataProvider: ~
+    App\DataProvider\PartnerProfilePublicItemDataProvider: ~
+
+    App\DataMapper\OpenIdConnectUserMapper:
+
+    App\Service\OpenIdConnectService:
+        arguments:
+            $mapper: '@App\DataMapper\OpenIdConnectUserMapper'
+            $providerUrl: 'https://login.microsoftonline.com/6fd171eb-7c51-4229-a660-3cd8ac531eb8/v2.0/'
+            $clientId: 'a151bc8b-cb4f-44b7-a1e5-34e8036d4330'
+            $clientSecret: '%env(AZURE_AD_SECRET)%'
+            $scopes: [ 'openid','offline_access','profile', 'user.read' ]
+            $defaultRoles: ['HansefitBasis']
+            $userFolderName: 'Hansefit'
+
+    Knp\Snappy\Pdf:
+        factory: [ '@App\Service\File\PdfFactory', create ]
+
+    #
+    # Serializer
+    #
+
+    App\Serializer\EventsDenormalizer:
+        tags:
+            - { name: serializer.normalizer }
+
+    App\Serializer\PaginationNormalizer:
+        tags:
+            - { name: serializer.normalizer }
+
+    App\Serializer\DatedNormalizer:
+        tags:
+            - { name: serializer.normalizer }
+
+    App\Serializer\AssetNormalizer:
+        calls:
+            - [setNormalizer, ['@api_platform.serializer.normalizer.item']]
+        tags:
+            - { name: serializer.normalizer }
+
+    App\Serializer\EventListNormalizer:
+        tags:
+            - { name: serializer.normalizer }
+
+    App\Serializer\EventErrorCollectionNormalizer:
+        tags:
+            - { name: serializer.normalizer }
+
+    App\Messenger\SqsJsonMessageSerializer: ~
+
+    # manually registering this extractor, since symfony5 this one is missing (bug?)
+    # which breaks the api/swagger documentation
+    Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor: ~
+
+    # another missing (?) class the autoloader is suddenly missing
+    Symfony\Component\Serializer\Encoder\JsonEncoder: ~

@@ -1,0 +1,16 @@
+// @name Put EndUser status
+PUT {{api_scheme}}{{api_host}}/api/endusers/627/transition
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "transaction": "on_pause",
+    "startDate": null,
+    "endDate": null
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

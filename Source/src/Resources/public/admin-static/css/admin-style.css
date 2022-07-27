@@ -1,0 +1,44 @@
+.objectlayout_element_StudioGallery div.pimcore_fieldcollection_item {
+    width:320px;
+    float:left;
+}
+
+.appPluginArchiveButton {
+    background: url("/bundles/pimcoreadmin/img/flat-white-icons/import.svg") center center no-repeat !important;
+}
+
+/* color overrides */
+#contentBackground, #content, #pimcore_panel_tabs > .x-tab-bar  {
+    background-color: #00194d!important;
+}
+
+#pimcore_navigation li:hover, #pimcore_navigation li.active, .x-menu-item-default.x-menu-item-active
+{
+    background-color: #003bb3!important;
+}
+
+.pimcore_main_toolbar .pimcore_save_button, .pimcore_main_toolbar .pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active, .pimcore_save_button.x-btn-focus {
+    background-color: #e50051!important;
+}
+#content input {
+    background-color: #000000!important;
+}
+#pimcore_body,.x-menu-body-default {
+    /*background-color: #1f2126!important;*/
+    background-color: #00194d!important;
+}
+
+.voucherOuterSummary {
+    padding: 0;
+}
+.voucherOuterSummary td {
+    vertical-align: top;
+}
+.voucherSummary {
+    margin: .5rem;
+    border-collapse: collapse;
+}
+.voucherSummary tr,.voucherSummary td {
+    padding: .5rem ;
+    border: 1px solid silver;
+}

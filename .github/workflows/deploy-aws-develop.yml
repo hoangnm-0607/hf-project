@@ -1,0 +1,40 @@
+name: Build & Deploy to Amazon ECR (DEV)
+on:
+  push:
+    branches:
+     - develop
+
+env:
+  ECR_REPOSITORY: 718248458598.dkr.ecr.eu-central-1.amazonaws.com/hansefit-dev-pimcore
+  AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      run:
+        aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $ECR_REPOSITORY
+
+    - name: build-image
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REPOSITORY:$IMAGE_TAG -f .docker/php/Dockerfile .
+        docker tag      $ECR_REPOSITORY:$IMAGE_TAG $ECR_REPOSITORY:latest
+
+    - name: push-image
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker push $ECR_REPOSITORY:latest
+        docker push $ECR_REPOSITORY:$IMAGE_TAG 
+        echo "::set-output name=image::$ECR_REPOSITORY:$IMAGE_TAG"
+
