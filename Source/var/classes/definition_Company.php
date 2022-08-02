@@ -7,6 +7,7 @@
  * Fields Summary:
  * - CasCompanyId [numeric]
  * - Status [select]
+ * - CompanyLocked [select]
  * - Name [input]
  * - Street [input]
  * - Number [input]
@@ -15,6 +16,11 @@
  * - Country [select]
  * - EndUserFolder [manyToOneRelation]
  * - CompanyCustomFields [manyToManyObjectRelation]
+ * - EmailTemplates [manyToOneRelation]
+ * - FaqTemplates [manyToOneRelation]
+ * - MarketingMaterialTemplates [manyToOneRelation]
+ * - ActivationLetterTemplates [manyToOneRelation]
+ * - Faqs [manyToManyObjectRelation]
  */
 
 return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
@@ -22,7 +28,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'Company',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1657786426,
+   'modificationDate' => 1659097570,
    'userOwner' => 33,
    'userModification' => 2,
    'parentClass' => '',
@@ -104,7 +110,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'region' => '',
                  'title' => 'BaseData',
                  'width' => 600,
-                 'height' => 530,
+                 'height' => 600,
                  'collapsible' => false,
                  'collapsed' => false,
                  'bodyStyle' => '',
@@ -127,7 +133,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'name' => 'CasCompanyId',
                      'title' => 'CAS company ID',
                      'tooltip' => '',
-                     'mandatory' => true,
+                     'mandatory' => false,
                      'noteditable' => true,
                      'index' => true,
                      'locked' => false,
@@ -136,8 +142,8 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'datatype' => 'data',
                      'relationType' => false,
                      'invisible' => false,
-                     'visibleGridView' => false,
-                     'visibleSearch' => false,
+                     'visibleGridView' => true,
+                     'visibleSearch' => true,
                      'blockedVarsForExport' => 
                     array (
                     ),
@@ -202,7 +208,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'datatype' => 'data',
                      'relationType' => false,
                      'invisible' => false,
-                     'visibleGridView' => false,
+                     'visibleGridView' => true,
                      'visibleSearch' => false,
                      'blockedVarsForExport' => 
                     array (
@@ -210,6 +216,47 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'defaultValueGenerator' => '',
                   )),
                   2 => 
+                  Pimcore\Model\DataObject\ClassDefinition\Data\Select::__set_state(array(
+                     'fieldtype' => 'select',
+                     'options' => 
+                    array (
+                      0 => 
+                      array (
+                        'key' => 'Yes',
+                        'value' => 'yes',
+                      ),
+                      1 => 
+                      array (
+                        'key' => 'No',
+                        'value' => 'no',
+                      ),
+                    ),
+                     'width' => '',
+                     'defaultValue' => 'no',
+                     'optionsProviderClass' => '',
+                     'optionsProviderData' => '',
+                     'columnLength' => 190,
+                     'dynamicOptions' => false,
+                     'name' => 'CompanyLocked',
+                     'title' => 'CompanyLocked',
+                     'tooltip' => '',
+                     'mandatory' => true,
+                     'noteditable' => false,
+                     'index' => false,
+                     'locked' => false,
+                     'style' => '',
+                     'permissions' => NULL,
+                     'datatype' => 'data',
+                     'relationType' => false,
+                     'invisible' => false,
+                     'visibleGridView' => true,
+                     'visibleSearch' => false,
+                     'blockedVarsForExport' => 
+                    array (
+                    ),
+                     'defaultValueGenerator' => '',
+                  )),
+                  3 => 
                   Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                      'fieldtype' => 'input',
                      'width' => 360,
@@ -233,14 +280,14 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'datatype' => 'data',
                      'relationType' => false,
                      'invisible' => false,
-                     'visibleGridView' => false,
-                     'visibleSearch' => false,
+                     'visibleGridView' => true,
+                     'visibleSearch' => true,
                      'blockedVarsForExport' => 
                     array (
                     ),
                      'defaultValueGenerator' => '',
                   )),
-                  3 => 
+                  4 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldcontainer::__set_state(array(
                      'fieldtype' => 'fieldcontainer',
                      'layout' => 'hbox',
@@ -282,7 +329,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'datatype' => 'data',
                          'relationType' => false,
                          'invisible' => false,
-                         'visibleGridView' => false,
+                         'visibleGridView' => true,
                          'visibleSearch' => false,
                          'blockedVarsForExport' => 
                         array (
@@ -313,7 +360,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'datatype' => 'data',
                          'relationType' => false,
                          'invisible' => false,
-                         'visibleGridView' => false,
+                         'visibleGridView' => true,
                          'visibleSearch' => false,
                          'blockedVarsForExport' => 
                         array (
@@ -328,7 +375,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'labelWidth' => 0,
                      'labelAlign' => 'top',
                   )),
-                  4 => 
+                  5 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldcontainer::__set_state(array(
                      'fieldtype' => 'fieldcontainer',
                      'layout' => 'hbox',
@@ -370,7 +417,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'datatype' => 'data',
                          'relationType' => false,
                          'invisible' => false,
-                         'visibleGridView' => false,
+                         'visibleGridView' => true,
                          'visibleSearch' => false,
                          'blockedVarsForExport' => 
                         array (
@@ -401,7 +448,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'datatype' => 'data',
                          'relationType' => false,
                          'invisible' => false,
-                         'visibleGridView' => false,
+                         'visibleGridView' => true,
                          'visibleSearch' => false,
                          'blockedVarsForExport' => 
                         array (
@@ -416,7 +463,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'labelWidth' => 0,
                      'labelAlign' => 'top',
                   )),
-                  5 => 
+                  6 => 
                   Pimcore\Model\DataObject\ClassDefinition\Data\Select::__set_state(array(
                      'fieldtype' => 'select',
                      'options' => 
@@ -455,14 +502,14 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'datatype' => 'data',
                      'relationType' => false,
                      'invisible' => false,
-                     'visibleGridView' => false,
+                     'visibleGridView' => true,
                      'visibleSearch' => false,
                      'blockedVarsForExport' => 
                     array (
                     ),
                      'defaultValueGenerator' => '',
                   )),
-                  6 => 
+                  7 => 
                   Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation::__set_state(array(
                      'fieldtype' => 'manyToOneRelation',
                      'width' => '',
@@ -688,6 +735,481 @@ else {
                      'pathFormatterClass' => '',
                      'name' => 'CompanyCustomFields',
                      'title' => 'Company Custom Fields',
+                     'tooltip' => '',
+                     'mandatory' => false,
+                     'noteditable' => false,
+                     'index' => false,
+                     'locked' => false,
+                     'style' => '',
+                     'permissions' => NULL,
+                     'datatype' => 'data',
+                     'invisible' => false,
+                     'visibleGridView' => false,
+                     'visibleSearch' => false,
+                     'blockedVarsForExport' => 
+                    array (
+                    ),
+                  )),
+                ),
+                 'locked' => false,
+                 'blockedVarsForExport' => 
+                array (
+                ),
+                 'icon' => '',
+                 'labelWidth' => 0,
+                 'labelAlign' => 'left',
+              )),
+              3 => 
+              Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
+                 'fieldtype' => 'panel',
+                 'layout' => NULL,
+                 'border' => false,
+                 'name' => 'Documents',
+                 'type' => NULL,
+                 'region' => NULL,
+                 'title' => 'Documents',
+                 'width' => '',
+                 'height' => '',
+                 'collapsible' => false,
+                 'collapsed' => false,
+                 'bodyStyle' => '',
+                 'datatype' => 'layout',
+                 'permissions' => NULL,
+                 'children' => 
+                array (
+                  0 => 
+                  Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldcontainer::__set_state(array(
+                     'fieldtype' => 'fieldcontainer',
+                     'layout' => 'hbox',
+                     'fieldLabel' => '',
+                     'name' => 'Feldcontainer',
+                     'type' => NULL,
+                     'region' => NULL,
+                     'title' => NULL,
+                     'width' => '',
+                     'height' => '',
+                     'collapsible' => false,
+                     'collapsed' => false,
+                     'bodyStyle' => '',
+                     'datatype' => 'layout',
+                     'permissions' => NULL,
+                     'children' => 
+                    array (
+                      0 => 
+                      Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation::__set_state(array(
+                         'fieldtype' => 'manyToOneRelation',
+                         'width' => '',
+                         'assetUploadPath' => '',
+                         'relationType' => true,
+                         'objectsAllowed' => false,
+                         'assetsAllowed' => false,
+                         'assetTypes' => 
+                        array (
+                        ),
+                         'documentsAllowed' => true,
+                         'documentTypes' => 
+                        array (
+                          0 => 
+                          array (
+                            'documentTypes' => 'folder',
+                          ),
+                        ),
+                         'classes' => 
+                        array (
+                        ),
+                         'pathFormatterClass' => '',
+                         'name' => 'EmailTemplates',
+                         'title' => 'Email Templates',
+                         'tooltip' => '',
+                         'mandatory' => false,
+                         'noteditable' => true,
+                         'index' => false,
+                         'locked' => false,
+                         'style' => '',
+                         'permissions' => NULL,
+                         'datatype' => 'data',
+                         'invisible' => false,
+                         'visibleGridView' => false,
+                         'visibleSearch' => false,
+                         'blockedVarsForExport' => 
+                        array (
+                        ),
+                      )),
+                      1 => 
+                      Pimcore\Model\DataObject\ClassDefinition\Layout\Button::__set_state(array(
+                         'fieldtype' => 'button',
+                         'handler' => '(function() {
+if (!this.object.data.data.EmailTemplates) {
+companyDocumentsCreateButtons.createTemplatesFolder(this.object.id, \'emailTemplates\');
+}
+});',
+                         'text' => 'Create',
+                         'icon' => '',
+                         'name' => 'CreateEmailTemplates',
+                         'type' => NULL,
+                         'region' => NULL,
+                         'title' => NULL,
+                         'width' => '',
+                         'height' => '',
+                         'collapsible' => false,
+                         'collapsed' => false,
+                         'bodyStyle' => NULL,
+                         'datatype' => 'layout',
+                         'permissions' => NULL,
+                         'children' => 
+                        array (
+                        ),
+                         'locked' => false,
+                         'blockedVarsForExport' => 
+                        array (
+                        ),
+                      )),
+                    ),
+                     'locked' => false,
+                     'blockedVarsForExport' => 
+                    array (
+                    ),
+                     'labelWidth' => 130,
+                     'labelAlign' => 'left',
+                  )),
+                  1 => 
+                  Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldcontainer::__set_state(array(
+                     'fieldtype' => 'fieldcontainer',
+                     'layout' => 'hbox',
+                     'fieldLabel' => '',
+                     'name' => 'Feldcontainer',
+                     'type' => NULL,
+                     'region' => NULL,
+                     'title' => NULL,
+                     'width' => '',
+                     'height' => '',
+                     'collapsible' => false,
+                     'collapsed' => false,
+                     'bodyStyle' => '',
+                     'datatype' => 'layout',
+                     'permissions' => NULL,
+                     'children' => 
+                    array (
+                      0 => 
+                      Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation::__set_state(array(
+                         'fieldtype' => 'manyToOneRelation',
+                         'width' => '',
+                         'assetUploadPath' => '',
+                         'relationType' => true,
+                         'objectsAllowed' => false,
+                         'assetsAllowed' => false,
+                         'assetTypes' => 
+                        array (
+                        ),
+                         'documentsAllowed' => true,
+                         'documentTypes' => 
+                        array (
+                          0 => 
+                          array (
+                            'documentTypes' => 'folder',
+                          ),
+                        ),
+                         'classes' => 
+                        array (
+                        ),
+                         'pathFormatterClass' => '',
+                         'name' => 'FaqTemplates',
+                         'title' => 'FAQ',
+                         'tooltip' => '',
+                         'mandatory' => false,
+                         'noteditable' => true,
+                         'index' => false,
+                         'locked' => false,
+                         'style' => '',
+                         'permissions' => NULL,
+                         'datatype' => 'data',
+                         'invisible' => false,
+                         'visibleGridView' => false,
+                         'visibleSearch' => false,
+                         'blockedVarsForExport' => 
+                        array (
+                        ),
+                      )),
+                      1 => 
+                      Pimcore\Model\DataObject\ClassDefinition\Layout\Button::__set_state(array(
+                         'fieldtype' => 'button',
+                         'handler' => '(function() {
+if (!this.object.data.data.FaqTemplates) {
+companyDocumentsCreateButtons.createTemplatesFolder(this.object.id, \'faqTemplates\');
+}
+});',
+                         'text' => 'Create',
+                         'icon' => '',
+                         'name' => 'CreateFaqTemplates',
+                         'type' => NULL,
+                         'region' => NULL,
+                         'title' => NULL,
+                         'width' => '',
+                         'height' => '',
+                         'collapsible' => false,
+                         'collapsed' => false,
+                         'bodyStyle' => NULL,
+                         'datatype' => 'layout',
+                         'permissions' => NULL,
+                         'children' => 
+                        array (
+                        ),
+                         'locked' => false,
+                         'blockedVarsForExport' => 
+                        array (
+                        ),
+                      )),
+                    ),
+                     'locked' => false,
+                     'blockedVarsForExport' => 
+                    array (
+                    ),
+                     'labelWidth' => 130,
+                     'labelAlign' => 'left',
+                  )),
+                  2 => 
+                  Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldcontainer::__set_state(array(
+                     'fieldtype' => 'fieldcontainer',
+                     'layout' => 'hbox',
+                     'fieldLabel' => '',
+                     'name' => 'Feldcontainer',
+                     'type' => NULL,
+                     'region' => NULL,
+                     'title' => NULL,
+                     'width' => '',
+                     'height' => '',
+                     'collapsible' => false,
+                     'collapsed' => false,
+                     'bodyStyle' => '',
+                     'datatype' => 'layout',
+                     'permissions' => NULL,
+                     'children' => 
+                    array (
+                      0 => 
+                      Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation::__set_state(array(
+                         'fieldtype' => 'manyToOneRelation',
+                         'width' => '',
+                         'assetUploadPath' => '',
+                         'relationType' => true,
+                         'objectsAllowed' => false,
+                         'assetsAllowed' => false,
+                         'assetTypes' => 
+                        array (
+                        ),
+                         'documentsAllowed' => true,
+                         'documentTypes' => 
+                        array (
+                          0 => 
+                          array (
+                            'documentTypes' => 'folder',
+                          ),
+                        ),
+                         'classes' => 
+                        array (
+                        ),
+                         'pathFormatterClass' => '',
+                         'name' => 'MarketingMaterialTemplates',
+                         'title' => 'MarketingMaterialTemplates',
+                         'tooltip' => '',
+                         'mandatory' => false,
+                         'noteditable' => true,
+                         'index' => false,
+                         'locked' => false,
+                         'style' => '',
+                         'permissions' => NULL,
+                         'datatype' => 'data',
+                         'invisible' => false,
+                         'visibleGridView' => false,
+                         'visibleSearch' => false,
+                         'blockedVarsForExport' => 
+                        array (
+                        ),
+                      )),
+                      1 => 
+                      Pimcore\Model\DataObject\ClassDefinition\Layout\Button::__set_state(array(
+                         'fieldtype' => 'button',
+                         'handler' => '(function() {
+if (!this.object.data.data.MarketingMaterialTemplates) {
+companyDocumentsCreateButtons.createTemplatesFolder(this.object.id, \'marketingMaterialTemplates\');
+}
+});',
+                         'text' => 'Create',
+                         'icon' => '',
+                         'name' => 'CreateMarketingMaterialTemplates',
+                         'type' => NULL,
+                         'region' => NULL,
+                         'title' => NULL,
+                         'width' => '',
+                         'height' => '',
+                         'collapsible' => false,
+                         'collapsed' => false,
+                         'bodyStyle' => NULL,
+                         'datatype' => 'layout',
+                         'permissions' => NULL,
+                         'children' => 
+                        array (
+                        ),
+                         'locked' => false,
+                         'blockedVarsForExport' => 
+                        array (
+                        ),
+                      )),
+                    ),
+                     'locked' => false,
+                     'blockedVarsForExport' => 
+                    array (
+                    ),
+                     'labelWidth' => 130,
+                     'labelAlign' => 'left',
+                  )),
+                  3 => 
+                  Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldcontainer::__set_state(array(
+                     'fieldtype' => 'fieldcontainer',
+                     'layout' => 'hbox',
+                     'fieldLabel' => '',
+                     'name' => 'Feldcontainer',
+                     'type' => NULL,
+                     'region' => NULL,
+                     'title' => NULL,
+                     'width' => '',
+                     'height' => '',
+                     'collapsible' => false,
+                     'collapsed' => false,
+                     'bodyStyle' => '',
+                     'datatype' => 'layout',
+                     'permissions' => NULL,
+                     'children' => 
+                    array (
+                      0 => 
+                      Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation::__set_state(array(
+                         'fieldtype' => 'manyToOneRelation',
+                         'width' => '',
+                         'assetUploadPath' => '',
+                         'relationType' => true,
+                         'objectsAllowed' => false,
+                         'assetsAllowed' => false,
+                         'assetTypes' => 
+                        array (
+                        ),
+                         'documentsAllowed' => true,
+                         'documentTypes' => 
+                        array (
+                          0 => 
+                          array (
+                            'documentTypes' => 'folder',
+                          ),
+                        ),
+                         'classes' => 
+                        array (
+                        ),
+                         'pathFormatterClass' => '',
+                         'name' => 'ActivationLetterTemplates',
+                         'title' => 'ActivationLetterTemplates',
+                         'tooltip' => '',
+                         'mandatory' => false,
+                         'noteditable' => true,
+                         'index' => false,
+                         'locked' => false,
+                         'style' => '',
+                         'permissions' => NULL,
+                         'datatype' => 'data',
+                         'invisible' => false,
+                         'visibleGridView' => false,
+                         'visibleSearch' => false,
+                         'blockedVarsForExport' => 
+                        array (
+                        ),
+                      )),
+                      1 => 
+                      Pimcore\Model\DataObject\ClassDefinition\Layout\Button::__set_state(array(
+                         'fieldtype' => 'button',
+                         'handler' => '(function() {
+if (!this.object.data.data.ActivationLetterTemplates) {
+companyDocumentsCreateButtons.createTemplatesFolder(this.object.id, \'activationLetterTemplates\');
+}
+});',
+                         'text' => 'Create',
+                         'icon' => '',
+                         'name' => 'CreateActivationLetterTemplates',
+                         'type' => NULL,
+                         'region' => NULL,
+                         'title' => NULL,
+                         'width' => '',
+                         'height' => '',
+                         'collapsible' => false,
+                         'collapsed' => false,
+                         'bodyStyle' => NULL,
+                         'datatype' => 'layout',
+                         'permissions' => NULL,
+                         'children' => 
+                        array (
+                        ),
+                         'locked' => false,
+                         'blockedVarsForExport' => 
+                        array (
+                        ),
+                      )),
+                    ),
+                     'locked' => false,
+                     'blockedVarsForExport' => 
+                    array (
+                    ),
+                     'labelWidth' => 130,
+                     'labelAlign' => 'left',
+                  )),
+                ),
+                 'locked' => false,
+                 'blockedVarsForExport' => 
+                array (
+                ),
+                 'icon' => '',
+                 'labelWidth' => 0,
+                 'labelAlign' => 'left',
+              )),
+              4 => 
+              Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
+                 'fieldtype' => 'panel',
+                 'layout' => NULL,
+                 'border' => false,
+                 'name' => 'FAQ',
+                 'type' => NULL,
+                 'region' => NULL,
+                 'title' => 'FAQ',
+                 'width' => '',
+                 'height' => '',
+                 'collapsible' => false,
+                 'collapsed' => false,
+                 'bodyStyle' => '',
+                 'datatype' => 'layout',
+                 'permissions' => NULL,
+                 'children' => 
+                array (
+                  0 => 
+                  Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::__set_state(array(
+                     'fieldtype' => 'manyToManyObjectRelation',
+                     'width' => '',
+                     'height' => '',
+                     'maxItems' => NULL,
+                     'relationType' => true,
+                     'visibleFields' => 
+                    array (
+                    ),
+                     'allowToCreateNewObject' => false,
+                     'optimizedAdminLoading' => false,
+                     'enableTextSelection' => false,
+                     'visibleFieldDefinitions' => 
+                    array (
+                    ),
+                     'classes' => 
+                    array (
+                      0 => 
+                      array (
+                        'classes' => 'Faq',
+                      ),
+                    ),
+                     'pathFormatterClass' => '',
+                     'name' => 'Faqs',
+                     'title' => 'Faqs',
                      'tooltip' => '',
                      'mandatory' => false,
                      'noteditable' => false,

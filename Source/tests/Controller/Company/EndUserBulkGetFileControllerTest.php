@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Controller\Company;
 
 use App\Controller\Company\EndUserBulkGetFileController;
+use App\Security\AuthorizationAssertHelper;
 use App\Service\EndUser\EndUserBulkUploadService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -16,12 +17,18 @@ final class EndUserBulkGetFileControllerTest extends TestCase
     /** @var EndUserBulkUploadService|MockObject */
     private EndUserBulkUploadService|MockObject $service;
 
+    /** @var AuthorizationAssertHelper|MockObject */
+    private AuthorizationAssertHelper|MockObject $authorizationAssertHelper;
+
     private EndUserBulkGetFileController $controller;
 
     protected function setUp(): void
     {
+        $this->authorizationAssertHelper = $this->createMock(AuthorizationAssertHelper::class);
+
         $this->service = $this->createMock(EndUserBulkUploadService::class);
         $this->controller = new EndUserBulkGetFileController($this->service);
+        $this->controller->setAuthorizationAssertHelper($this->authorizationAssertHelper);
     }
 
     protected function tearDown(): void
@@ -29,6 +36,7 @@ final class EndUserBulkGetFileControllerTest extends TestCase
         unset(
             $this->controller,
             $this->service,
+            $this->authorizationAssertHelper,
         );
     }
 
@@ -37,17 +45,23 @@ final class EndUserBulkGetFileControllerTest extends TestCase
         $companyId = 777;
         $confirmationId = 'fssdfsdfdfdff';
 
-
-        $file = $this->createMock(Asset::class);
+        $asset = $this->createMock(Asset::class);
 
         $this->service
             ->expects(self::once())
             ->method('findFile')
             ->with($companyId, $confirmationId)
-            ->willReturn($file)
+            ->willReturn($asset)
         ;
 
-        $file
+        $this->authorizationAssertHelper
+            ->expects(self::once())
+            ->method('assertUserIsFileOwner')
+            ->with($asset)
+        ;
+
+
+        $asset
             ->expects(self::once())
             ->method('getData')
             ->willReturn('{}')

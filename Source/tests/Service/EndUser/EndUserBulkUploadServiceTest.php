@@ -9,6 +9,7 @@ use App\Entity\EndUser;
 use App\Service\Company\CompanyService;
 use App\Service\EndUser\EndUserManager;
 use App\Service\EndUser\EndUserBulkUploadService;
+use App\Service\File\UserFileIteratorResolver;
 use App\Service\FolderService;
 use App\Service\I18NService;
 use Carbon\Carbon;
@@ -38,6 +39,8 @@ final class EndUserBulkUploadServiceTest extends TestCase
     /** @var MockObject|I18NService */
     private MockObject|I18NService $i18NService;
 
+    private UserFileIteratorResolver|MockObject $fileIteratorResolver;
+
     private EndUserBulkUploadService $service;
 
     protected function setUp(): void
@@ -48,8 +51,9 @@ final class EndUserBulkUploadServiceTest extends TestCase
         $this->folderService = $this->createMock(FolderService::class);
         $this->endUserManager = $this->createMock(EndUserManager::class);
         $this->i18NService = $this->createMock(I18NService::class);
+        $this->fileIteratorResolver = $this->createMock(UserFileIteratorResolver::class);
 
-        $this->service = new EndUserBulkUploadService($this->filesystem, $this->companyService, $this->folderService, $this->endUserManager);
+        $this->service = new EndUserBulkUploadService($this->filesystem, $this->companyService, $this->folderService, $this->endUserManager, $this->fileIteratorResolver);
         $this->service->setValidator($this->validator);
         $this->service->setI18NService($this->i18NService);
 
@@ -65,6 +69,7 @@ final class EndUserBulkUploadServiceTest extends TestCase
             $this->service,
             $this->endUserManager,
             $this->i18NService,
+            $this->fileIteratorResolver,
         );
     }
 

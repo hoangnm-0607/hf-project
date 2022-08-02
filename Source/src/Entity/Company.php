@@ -6,21 +6,22 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\Company\CompanyEndUserListController;
 use App\Controller\Company\EndUserBulkCancelController;
 use App\Controller\Company\EndUserBulkCreateController;
+use App\Controller\Company\EndUserBulkGetFileController;
 use App\Controller\Company\EndUserBulkGetResultController;
 use App\Controller\Company\EndUserBulkTemplateController;
-use App\Controller\Company\EndUserBulkGetFileController;
 use App\Controller\Company\EndUserBulkUploadController;
-use App\Controller\Company\CompanyEndUserListController;
 use App\Dto\Company\CompanyAssetDocumentInputDto;
 use App\Dto\Company\CompanyAssetsOutputDto;
+use App\Dto\Company\CompanyCustomFieldDto;
 use App\Dto\Company\CompanyInputDto;
 use App\Dto\Company\CompanyNamesListOutputDto;
-use App\Dto\Company\CompanyCustomFieldDto;
 use App\Dto\Company\CompanyOutputDto;
 use App\Dto\EndUser\EndUserBulkUploadFileDto;
 use App\Dto\EndUser\EndUserListOutputDto;
+use App\Dto\Faq\FaqDto;
 use App\Helper\ConstHelper;
 use Pimcore\Model\DataObject\Company as DataObjectCompany;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +36,21 @@ use Symfony\Component\HttpFoundation\Request;
             'openapi_context' => [
                 'summary' => 'Get current user company list.',
                 'description' => 'Get current user company list.',
+            ],
+        ],
+        'get-company-faqs'.ConstHelper::AS_MANAGER => [
+            'method' => Request::METHOD_GET,
+            'path' => '/{companyId}/faqs',
+            'requirements' => ['companyId' => '\d+'],
+            'input' => false,
+            'output' => FaqDto::class,
+            'openapi_context' => [
+                'summary' => 'Get company FAQ list.',
+                'description' => 'Get company FAQ list.',
+                'parameters' => [
+                    Company::COMPANY_ID,
+                    ConstHelper::QUERY_LANGUAGE,
+                ],
             ],
         ],
         'get-company-end-users'.ConstHelper::AS_MANAGER => [
@@ -230,7 +246,7 @@ use Symfony\Component\HttpFoundation\Request;
                 ],
             ],
         ],
-        'get-bulk-upload'.ConstHelper::AS_MANAGER => [
+        'get-bulk-upload-result'.ConstHelper::AS_MANAGER => [
             'method' => Request::METHOD_GET,
             'path' => '/{companyId}/endusers/bulk-upload/{confirmationId}/result',
             'requirements' => ['companyId' => '\d+', 'confirmationId' => '\S{32}'],

@@ -1,0 +1,14 @@
+pimcore:
+    documents:
+        doc_types:
+            definitions:
+                ae14a245-a87d-49aa-93f9-a80e9e72ccef:
+                    name: 'Activation Letter'
+                    group: ''
+                    controller: 'App\Controller\Documents\ActivationLetter\ActivationLetterController::activationletterAction'
+                    template: null
+                    type: printpage
+                    priority: 0
+                    creationDate: 1658153937
+                    modificationDate: 1658155068
+                    staticGeneratorEnabled: null

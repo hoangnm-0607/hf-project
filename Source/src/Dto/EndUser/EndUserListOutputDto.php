@@ -90,6 +90,20 @@ class EndUserListOutputDto
 
     #[ApiProperty(attributes: [
         'openapi_context' => [
+            'description' => 'Business Email',
+            'example' => 'cliff.burton.work@gmail.com',
+            'minLength' => 5,
+            'maxLength' => 254,
+            'type' => 'string'
+        ]
+    ])]
+    #[Assert\Type('string')]
+    #[Assert\Length(min: 5, max: 254)]
+    #[Assert\Email( mode: 'strict')]
+    public ?string $businessEmail;
+
+    #[ApiProperty(attributes: [
+        'openapi_context' => [
             'description' => 'Date Of Birth (YYYY-MM-DD)',
             'example' => '1962-02-10',
             'minLength' => 10,

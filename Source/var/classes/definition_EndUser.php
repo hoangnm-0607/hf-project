@@ -23,6 +23,7 @@
  * - RegistrationDate [datetime]
  * - ActivationKey [input]
  * - HashedUserId [input]
+ * - CasUserId [numeric]
  */
 
 return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
@@ -30,9 +31,9 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'EndUser',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1657099729,
+   'modificationDate' => 1658847439,
    'userOwner' => 47,
-   'userModification' => 33,
+   'userModification' => 2,
    'parentClass' => '',
    'implementsInterfaces' => '',
    'listingParentClass' => '',
@@ -220,7 +221,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'datatype' => 'data',
                          'relationType' => false,
                          'invisible' => false,
-                         'visibleGridView' => false,
+                         'visibleGridView' => true,
                          'visibleSearch' => false,
                          'blockedVarsForExport' => 
                         array (
@@ -343,7 +344,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'datatype' => 'data',
                          'relationType' => false,
                          'invisible' => false,
-                         'visibleGridView' => false,
+                         'visibleGridView' => true,
                          'visibleSearch' => false,
                          'blockedVarsForExport' => 
                         array (
@@ -374,7 +375,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'datatype' => 'data',
                          'relationType' => false,
                          'invisible' => false,
-                         'visibleGridView' => false,
+                         'visibleGridView' => true,
                          'visibleSearch' => false,
                          'blockedVarsForExport' => 
                         array (
@@ -625,7 +626,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'permissions' => NULL,
                          'datatype' => 'data',
                          'invisible' => false,
-                         'visibleGridView' => false,
+                         'visibleGridView' => true,
                          'visibleSearch' => false,
                          'blockedVarsForExport' => 
                         array (
@@ -710,7 +711,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                         ),
                          'width' => 820,
                          'height' => '',
-                         'maxItems' => '',
+                         'maxItems' => NULL,
                          'relationType' => true,
                          'allowToCreateNewObject' => true,
                          'optimizedAdminLoading' => false,
@@ -910,6 +911,37 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'relationType' => false,
                      'invisible' => false,
                      'visibleGridView' => false,
+                     'visibleSearch' => false,
+                     'blockedVarsForExport' => 
+                    array (
+                    ),
+                     'defaultValueGenerator' => '',
+                  )),
+                  2 => 
+                  Pimcore\Model\DataObject\ClassDefinition\Data\Numeric::__set_state(array(
+                     'fieldtype' => 'numeric',
+                     'width' => '',
+                     'defaultValue' => NULL,
+                     'integer' => true,
+                     'unsigned' => true,
+                     'minValue' => NULL,
+                     'maxValue' => NULL,
+                     'unique' => false,
+                     'decimalSize' => NULL,
+                     'decimalPrecision' => NULL,
+                     'name' => 'CasUserId',
+                     'title' => 'CAS user ID',
+                     'tooltip' => '',
+                     'mandatory' => false,
+                     'noteditable' => true,
+                     'index' => true,
+                     'locked' => false,
+                     'style' => '',
+                     'permissions' => NULL,
+                     'datatype' => 'data',
+                     'relationType' => false,
+                     'invisible' => false,
+                     'visibleGridView' => true,
                      'visibleSearch' => false,
                      'blockedVarsForExport' => 
                     array (

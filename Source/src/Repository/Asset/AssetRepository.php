@@ -15,4 +15,12 @@ class AssetRepository
 
         return $listing;
     }
+
+    public function findAllAssetsInFolder(Asset\Folder $folder): Asset\Listing
+    {
+        $listing = new Asset\Listing();
+        $listing->setCondition('path like ?', [$folder->getRealFullPath() . '%']);
+
+        return $listing;
+    }
 }

@@ -1,0 +1,14 @@
+pimcore:
+    documents:
+        doc_types:
+            definitions:
+                263026ef-89e7-4d47-907e-661e05581a56:
+                    name: 'Email Header'
+                    group: Email
+                    controller: 'App\Controller\Documents\Email\CompanyEmailController::headerAction'
+                    template: null
+                    type: snippet
+                    priority: 0
+                    creationDate: 1658063431
+                    modificationDate: 1658063467
+                    staticGeneratorEnabled: null

@@ -21,6 +21,7 @@ class CasPartnerUpdate implements SqsCasMessageInterface
     private ?float $longitude;
     private string $phone;
     private string $email;
+    private string $note;
     private string $homepage;
     private int $categoryId;
     private array $packagesAdd;
@@ -52,6 +53,7 @@ class CasPartnerUpdate implements SqsCasMessageInterface
                 ],
                 "phone" => $this->phone,
                 "email" => $this->email,
+                "note" => $this->note,
                 "homepage" => $this->homepage,
                 "categoryId" => $this->categoryId,
                 "packages" => [
@@ -222,5 +224,13 @@ class CasPartnerUpdate implements SqsCasMessageInterface
     public function setVisibleOnMap(bool $visibleOnMap): void
     {
         $this->visibleOnMap = $visibleOnMap;
+    }
+
+    /**
+     * @param string $note
+     */
+    public function setNote(string $note): void
+    {
+        $this->note = $note;
     }
 }

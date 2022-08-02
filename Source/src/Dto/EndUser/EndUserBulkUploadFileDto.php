@@ -30,6 +30,14 @@ class EndUserBulkUploadFileDto implements EndUserBulkUploadFileInterface
 
     #[ApiProperty(attributes: [
         'openapi_context' => [
+            'description' => 'All Data',
+            'type' => 'array'
+        ]
+    ])]
+    public array $allData = [];
+
+    #[ApiProperty(attributes: [
+        'openapi_context' => [
             'description' => 'Errors array',
             'type' => 'array'
         ]

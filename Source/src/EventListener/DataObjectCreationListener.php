@@ -8,6 +8,7 @@ use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Booking;
 use Pimcore\Model\DataObject\Company;
+use Pimcore\Model\DataObject\CompanyFileCategory;
 use Pimcore\Model\DataObject\Course;
 use Pimcore\Model\DataObject\CourseCategory;
 use Pimcore\Model\DataObject\CourseUser;
@@ -23,6 +24,7 @@ class DataObjectCreationListener
     const PARTNER_ROOT_FOLDER = 'PartnerRootFolder';
     const PARTNER_CATEGORIES_ROOT_FOLDER = 'PartnerCategoriesRootFolder';
     const COURSE_CATEGORIES_ROOT_FOLDER = 'CourseCategoriesRootFolder';
+    const CCP_FILE_CATEGORIES_ROOT_FOLDER = 'CcpFileCategoriesRootFolder';
     const COURSE_USERS_ROOT_FOLDER = 'UserRootFolder';
     const COMPANY_ROOT_FOLDER = 'CompanyRootFolder';
 
@@ -59,6 +61,8 @@ class DataObjectCreationListener
                 $this->checkForPartnerCategoryRootFolder($parent);
             } else if ($object instanceof CourseCategory) {
                 $this->checkForCourseCategoryRootFolder($parent);
+            } else if ($object instanceof CompanyFileCategory) {
+                $this->checkForCppFileCategoryRootFolder($parent);
             } else if ($object instanceof CourseUser) {
                 $this->checkForCourseUserRootFolder($parent);
             }
@@ -165,6 +169,22 @@ class DataObjectCreationListener
             throw new DataObjectException(
                 $this->translator->trans(
                     'admin.object.message.createFailed.courseCategoriesUnderRootFolder', [], 'admin')
+            );
+        }
+    }
+
+    /**
+     * @param AbstractObject|null $parent
+     *
+     * @throws DataObjectException
+     * @throws Exception
+     */
+    private function checkForCppFileCategoryRootFolder(?AbstractObject $parent): void
+    {
+        if ( ! $parent instanceof Folder || $parent !== WebsiteSetting::getByName(self::CCP_FILE_CATEGORIES_ROOT_FOLDER)->getData()) {
+            throw new DataObjectException(
+                $this->translator->trans(
+                    'admin.object.message.createFailed.ccpFileCategoriesUnderRootFolder', [], 'admin')
             );
         }
     }

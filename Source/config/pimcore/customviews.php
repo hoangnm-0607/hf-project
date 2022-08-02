@@ -72,48 +72,6 @@ return [
             'position' => 'right',
             'sort' => '-15',                                                    // show in on the top
             'expanded' => false,
-        ],
-        [
-            'treetype' => 'object',                                              // asset view
-            'name' => 'Course Categories',
-            'icon' => '/bundles/pimcoreadmin/img/flat-color-icons/fieldset.svg',
-            'id' => 'courseCategoryView',
-            'rootfolder' => '/Course Categories',
-            'classes' => [
-                'CourseCategory' => 1
-            ],
-            'showroot' => false,
-            'position' => 'right',
-            'sort' => '-15',                                                    // show in on the top
-            'expanded' => false,
-        ],
-        [
-            'treetype' => 'object',                                              // asset view
-            'name' => 'Partner Categories',
-            'icon' => '/bundles/pimcoreadmin/img/flat-color-icons/menu.svg',
-            'id' => 'partnerCategoryView',
-            'rootfolder' => '/Partner Categories',
-            'classes' => [
-                'PartnerCategory' => 1
-            ],
-            'showroot' => false,
-            'position' => 'right',
-            'sort' => '-15',                                                    // show in on the top
-            'expanded' => false,
-        ],
-        [
-            'treetype' => 'object',                                              // asset view
-            'name' => 'Service Packages',
-            'icon' => '/bundles/pimcoreadmin/img/flat-color-icons/package.svg',
-            'id' => 'servicesPackageView',
-            'rootfolder' => '/Service Packages',
-            'classes' => [
-                'ServicePackage' => 1
-            ],
-            'showroot' => false,
-            'position' => 'right',
-            'sort' => '-15',                                                    // show in on the top
-            'expanded' => false,
         ]
     ]
 ];

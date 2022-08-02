@@ -1,0 +1,14 @@
+pimcore:
+    documents:
+        doc_types:
+            definitions:
+                6e84dae7-c892-49e7-9df2-56e003515e65:
+                    name: 'Email with Link Template'
+                    group: Email
+                    controller: 'App\Controller\Documents\Email\CompanyEmailController::emailWithLinkAction'
+                    template: null
+                    type: page
+                    priority: 0
+                    creationDate: 1658321777
+                    modificationDate: 1658321864
+                    staticGeneratorEnabled: null

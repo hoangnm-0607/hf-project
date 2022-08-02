@@ -2,7 +2,7 @@
 
 namespace App\Dto\CAS;
 
-class CASPartnerProfileDto
+class CASPartnerProfileDto implements CasDtoInterface
 {
      public ?int $pimcoreId;
 
@@ -25,6 +25,8 @@ class CASPartnerProfileDto
      public ?string $phone;
 
      public ?string $homepage;
+
+    public ?string $note;
 
      public bool $visibleOnMap;
 

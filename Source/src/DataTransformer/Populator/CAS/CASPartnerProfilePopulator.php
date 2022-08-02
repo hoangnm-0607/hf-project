@@ -6,10 +6,14 @@ use App\Dto\CAS\CASPartnerProfileDto;
 use Pimcore\Model\DataObject\PartnerProfile;
 use Pimcore\Model\DataObject\ServicePackage;
 
-class CASPartnerProfilePopulator
+class CASPartnerProfilePopulator implements CasPopulatorInterface
 {
-
-    public function populate(PartnerProfile $partnerProfile): CASPartnerProfileDto
+    /**
+     * @param PartnerProfile $partnerProfile
+     *
+     * @return CASPartnerProfileDto
+     */
+    public function populate($partnerProfile): CASPartnerProfileDto
     {
         $partnerProfileCasDto = new CASPartnerProfileDto();
         $partnerProfileCasDto->pimcoreId   = $partnerProfile->getId();
@@ -27,11 +31,17 @@ class CASPartnerProfilePopulator
         $partnerProfileCasDto->email    = $partnerProfile->getEmail();
         $partnerProfileCasDto->phone    = $partnerProfile->getTelephone();
         $partnerProfileCasDto->homepage = $partnerProfile->getWebsite();
+        $partnerProfileCasDto->note = $partnerProfile->getNotesInformations('de');
         $partnerProfileCasDto->visibleOnMap = $partnerProfile->getStudioVisibility()  != 'Nein';
         $partnerProfileCasDto->categoryId = $partnerProfile->getPartnerCategoryPrimary()?->getId();
         $partnerProfileCasDto->packages = $this->aggregateServices($partnerProfile);
 
         return $partnerProfileCasDto;
+    }
+
+    public function isSupport($entity): bool
+    {
+        return $entity instanceof PartnerProfile;
     }
 
     private function aggregateServices(PartnerProfile $partnerProfile):array

@@ -28,15 +28,27 @@ class CompanyAssetDocumentInputDto extends AssetUploadDto
 
     #[ApiProperty(attributes: [
         'openapi_context' => [
-            'description' => 'Folder Name',
-            'example' => 'Good to know documents',
+            'description' => 'Description of the document',
+            'example' => 'Contains setup instructions',
             'type' => 'string',
-            'maxLength' => 190,
+            'maxLength' => 255,
             'nullable' => false,
         ]
     ])]
     #[Assert\Type('string')]
     #[Assert\NotBlank]
-    #[Assert\Length(max: 190)]
-    public string $folderName;
+    #[Assert\Length(max: 255)]
+    public string $description;
+
+    #[ApiProperty(attributes: [
+        'openapi_context' => [
+            'description' => 'Id of the CCP file category',
+            'example' => '123',
+            'type' => 'integer',
+            'nullable' => false,
+        ]
+    ])]
+    #[Assert\Type('integer')]
+    #[Assert\NotNull]
+    public int $categoryId;
 }

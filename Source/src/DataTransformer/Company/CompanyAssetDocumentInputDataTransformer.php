@@ -7,6 +7,7 @@ namespace App\DataTransformer\Company;
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use App\Dto\Company\CompanyAssetDocumentInputDto;
 use App\Entity\Company;
+use App\Service\Company\CompanyFileCategoryService;
 use App\Service\FolderService;
 use App\Traits\I18NServiceTrait;
 use App\Traits\ValidatorTrait;
@@ -19,10 +20,12 @@ class CompanyAssetDocumentInputDataTransformer implements DataTransformerInterfa
     use ValidatorTrait;
 
     private FolderService $folderService;
+    private CompanyFileCategoryService $categoryService;
 
-    public function __construct(FolderService $folderService)
+    public function __construct(FolderService $folderService, CompanyFileCategoryService $categoryService)
     {
         $this->folderService = $folderService;
+        $this->categoryService = $categoryService;
     }
 
     /**
@@ -41,13 +44,17 @@ class CompanyAssetDocumentInputDataTransformer implements DataTransformerInterfa
         /** @var Company $company */
         $company = $context[AbstractNormalizer::OBJECT_TO_POPULATE];
 
-        $companyDocumentsFolder = $this->folderService->getOrCreateAssetsFolderForCompany($company, $object->language, $object->folderName);
+        $companyDocumentsFolder = $this->folderService->getOrCreateAssetsFolderForCompany($company, $object->language);
+
+        $companyFileCategory = $this->categoryService->findOneOrThrowException($object->categoryId);
 
         $asset = new Asset();
         $asset->setParent($companyDocumentsFolder);
         $asset->setFilename($object->filename);
 
-        $asset->setProperty('originalFilename', 'image', $object->originalFilename ?? $object->filename);
+        $asset->setProperty('originalFilename', 'text', $object->originalFilename ?? $object->filename);
+        $asset->setProperty('description', 'text', $object->description);
+        $asset->setProperty('company_asset_category', 'object', $companyFileCategory);
 
         $asset->save(['versionNote' => 'API upload']);
 
@@ -56,6 +63,7 @@ class CompanyAssetDocumentInputDataTransformer implements DataTransformerInterfa
 
     public function supportsTransformation($data, string $to, array $context = []): bool
     {
-        return $data instanceof CompanyAssetDocumentInputDto && Company::class === $to;
+        return ($data instanceof CompanyAssetDocumentInputDto ||
+                ($context['input']['class'] ?? null) === CompanyAssetDocumentInputDto::class) && Company::class === $to;
     }
 }

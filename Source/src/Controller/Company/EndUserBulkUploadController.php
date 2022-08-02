@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Company;
 
 use ApiPlatform\Core\Validator\Exception\ValidationException;
+use App\Helper\FileHelper;
 use App\Service\EndUser\EndUserBulkUploadService;
 use App\Service\InMemoryUserReaderService;
 use App\Traits\SymfonyValidatorTrait;
@@ -35,7 +36,7 @@ class EndUserBulkUploadController
             $uploadFile,
             [
                 new NotNull(['message' => 'file_is_missed']),
-                new File(['mimeTypes' => ['text/csv', 'text/plain', 'application/csv']]),
+                new File(['mimeTypes' => FileHelper::getBulkUploadMimeTypeSupport()]),
             ]
         );
 

@@ -1,0 +1,23 @@
+{% extends('companyEmail/defaultEmail.html.twig') %}
+
+
+{% block content %}
+    <div id="content">
+        <div>
+            {{ pimcore_areablock('emailContent1', {
+                'allowed': ['email-content'],
+            }) }}
+        </div>
+
+        <div>
+            Link: <a href="{{ link }}">{{ link }}</a>
+        </div>
+        <div>
+
+            {{ pimcore_areablock('emailContent2', {
+                'allowed': ['email-content'],
+            }) }}
+        </div>
+    </div>
+{% endblock %}
+

@@ -7,6 +7,18 @@ pimcore.plugin.startup = Class.create(pimcore.plugin.admin, {
 
     initialize: function () {
         pimcore.plugin.broker.registerPlugin(this);
+
+        var timeout = 100000;
+        Ext.data.proxy.Server.override ({
+            timeout: timeout
+        });
+
+        Ext.data.Connection.override({
+            timeout: timeout
+        });
+
+        Ext.Ajax.setTimeout(timeout);
+        Ext.data.proxy.Ajax.override({ timeout: timeout });
     },
     pimcoreReady: function () {
 

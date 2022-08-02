@@ -1,0 +1,14 @@
+pimcore:
+    documents:
+        doc_types:
+            definitions:
+                4550c134-ab10-448a-a17b-8e1d2f78f94c:
+                    name: 'Email Footer'
+                    group: Email
+                    controller: 'App\Controller\Documents\Email\CompanyEmailController::footerAction'
+                    template: null
+                    type: snippet
+                    priority: 0
+                    creationDate: 1658062684
+                    modificationDate: 1658062853
+                    staticGeneratorEnabled: null

@@ -39,7 +39,6 @@ final class CompanyEndUserListCollectionProviderTest extends TestCase
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->authorizationAssertHelper = $this->createMock(AuthorizationAssertHelper::class);
 
-
         $this->provider = new CompanyEndUserListCollectionProvider($this->userRepository, $this->companyService, 10);
         $this->provider->setRequestStack($this->requestStack);
         $this->provider->setAuthorizationAssertHelper($this->authorizationAssertHelper);

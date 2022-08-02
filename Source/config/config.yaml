@@ -47,6 +47,7 @@ pimcore:
             'Pimcore\Model\DataObject\Voucher': 'App\Entity\Voucher'
             'Pimcore\Model\DataObject\ServicePackage': 'App\Entity\ServicePackage'
             'Pimcore\Model\DataObject\EndUser': 'App\Entity\EndUser'
+            'Pimcore\Model\DataObject\CompanyFileCategory': 'App\Entity\CompanyFileCategory'
 
 
 #### CUSTOM DOCUMENT EDITABLES

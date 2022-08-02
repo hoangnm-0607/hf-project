@@ -16,6 +16,7 @@ class AppBundle extends AbstractPimcoreBundle
             '/bundles/app/admin-static/js/app.plugin.pimcore.helpers.js',
             '/bundles/app/admin-static/js/app.plugin.calcGeoDataButton.js',
             '/bundles/app/admin-static/js/app.plugin.companyInviteUserButton.js',
+            '/bundles/app/admin-static/js/app.plugin.companyDocumentsCreateButtons.js',
         ];
     }
 

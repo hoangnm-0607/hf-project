@@ -1,0 +1,15 @@
+pimcore:
+    properties:
+        predefined:
+            definitions:
+                2c8998f9-4455-4816-8254-c19513bf9b86:
+                    name: 'CCP File Description'
+                    description: 'Description of the asset'
+                    key: description
+                    type: text
+                    data: ''
+                    config: ''
+                    ctype: asset
+                    inheritable: false
+                    creationDate: 1658908119
+                    modificationDate: 1658920064

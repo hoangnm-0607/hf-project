@@ -25,20 +25,6 @@ final class EndUserOutputDto extends EndUserListOutputDto
 
     #[ApiProperty(attributes: [
         'openapi_context' => [
-            'description' => 'Business Email',
-            'example' => 'cliff.burton.work@gmail.com',
-            'minLength' => 5,
-            'maxLength' => 254,
-            'type' => 'string'
-        ]
-    ])]
-    #[Assert\Type('string')]
-    #[Assert\Length(min: 5, max: 254)]
-    #[Assert\Email( mode: 'strict')]
-    public ?string $businessEmail;
-
-    #[ApiProperty(attributes: [
-        'openapi_context' => [
             'description' => 'Phone Number',
             'example' => '+4966555555',
             'maxLength' => 30,

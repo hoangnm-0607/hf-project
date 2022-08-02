@@ -11,8 +11,8 @@ use Pimcore\Model\DataObject\Course;
 use Pimcore\Model\DataObject\EndUser;
 use Pimcore\Model\DataObject\Folder as DataObjectFolder;
 use Pimcore\Model\DataObject\PartnerProfile;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\Folder;
-use Pimcore\Model\Document\Link;
 
 class FolderService
 {
@@ -26,15 +26,31 @@ class FolderService
     public const CUSTOM_FIELDS_FOLDER = 'Custom Fields';
     public const DOCUMENTS            = 'Documents';
     public const COMPANIES_FOLDER     = 'Companies';
-    public const TEMP_FILES_FOLDER    = 'Temporary Files';
-    public const END_USER_BULK_UPLOAD_TEMP_FILES = 'EndUser Bulk Uploads';
-    public const CCP_DOCUMENT_Folder = 'Company (CCP)';
-    public const EMAIL_TEMPLATES_FOLDER = 'E-Mail Templates';
-    public const COMPANY_EMAIL_FOLDER = 'Company Emails';
+    public const TEMP_FILES_FOLDER    = 'Temporary_Files';
+    public const END_USER_BULK_UPLOAD_TEMP_FILES = 'EndUser_Bulk_Uploads';
     public const RESEND_LETTER = 'Resend Letter';
 
-    public static string $companyActivationLetter = '/'.self::CCP_DOCUMENT_Folder.'/Activation Letter/Company Activation Letters/%s/%s/%s';
-    public static string $activationLetter = '/'.self::CCP_DOCUMENT_Folder.'/Activation Letter/%s/%s';
+    public const CCP_DOCUMENT_FOLDER = 'Company (CCP)';
+
+    public const EMAIL_TEMPLATES_FOLDER = 'E-Mail Templates';
+    public const COMPANY_EMAIL_FOLDER = 'Company Emails';
+
+    public const FAQ_FOLDER = 'FAQ';
+    public const COMPANY_FAQ_FOLDER = 'Company FAQ';
+
+    public const ACTIVATION_LETTER_FOLDER = 'Activation Letters';
+    public const COMPANY_ACTIVATION_LETTER_FOLDER = 'Company Activation Letters';
+
+    public const MARKETING_MATERIAL_FOLDER = 'Marketing Material';
+    public const COMPANY_MARKETING_MATERIAL_FOLDER = 'Company Marketing Material';
+
+    public const TEMPLATE_TYPE_EMAIL = 'emailTemplates';
+    public const TEMPLATE_TYPE_FAQ = 'faqTemplates';
+    public const TEMPLATE_TYPE_ACTIVATION_LETTER = 'activationLetterTemplates';
+    public const TEMPLATE_TYPE_MARKETING_MATERIAL = 'marketingMaterialTemplates';
+
+    public static string $companyActivationLetter = '/'.self::CCP_DOCUMENT_FOLDER.'/'.self::ACTIVATION_LETTER_FOLDER.'/'.self::COMPANY_ACTIVATION_LETTER_FOLDER.'/%s/%s/%s';
+    public static string $activationLetter = '/'.self::CCP_DOCUMENT_FOLDER.'/'.self::ACTIVATION_LETTER_FOLDER.'/%s/%s';
 
     private array $locales;
 
@@ -116,11 +132,14 @@ class FolderService
     /**
      * @throws Exception
      */
-    public function createDocumentFolder($parent, $key): Folder
+    public function createDocumentFolder($parent, $key, $language = null): Folder
     {
         $folder = new Folder();
         $folder->setKey($key);
         $folder->setParent($parent);
+        if ($language) {
+            $folder->setProperty("language", 'text', $language);
+        }
         $folder->save();
 
         return $folder;
@@ -129,31 +148,76 @@ class FolderService
     /**
      * @throws Exception
      */
-    public function createDocumentFolderForCompany(Company $company): void
+    public function createDocumentFolderForCompany(Company $company, ?string $subFolder = null): Folder
     {
         $companyId = (string) $company->getId();
 
-        if (!$ccpFolder  = Folder::getByPath('/' . self::CCP_DOCUMENT_Folder)) {
-            $ccpFolder = $this->createDocumentFolder( Folder::getByPath('/'), self::CCP_DOCUMENT_Folder);
+        if (!$ccpFolder  = Folder::getByPath('/' . self::CCP_DOCUMENT_FOLDER)) {
+            $ccpFolder = $this->createDocumentFolder( Document::getById(1), self::CCP_DOCUMENT_FOLDER);
         }
-        if (!$emailFolder  = Folder::getByPath('/' . self::CCP_DOCUMENT_Folder . '/' . self::EMAIL_TEMPLATES_FOLDER)) {
-            $emailFolder = $this->createDocumentFolder( $ccpFolder, self::EMAIL_TEMPLATES_FOLDER);
-        }
-        if (!$companyEmailFolder  = Folder::getByPath('/' . self::CCP_DOCUMENT_Folder . '/' . self::EMAIL_TEMPLATES_FOLDER . '/' . self::COMPANY_EMAIL_FOLDER)) {
-            $companyEmailFolder = $this->createDocumentFolder( $emailFolder, self::COMPANY_EMAIL_FOLDER);
-        }
-//        if (!$companyFolder  = Folder::getByPath('/' . self::CCP_DOCUMENT_Folder . '/' . self::EMAIL_TEMPLATES_FOLDER . '/' . self::COMPANY_EMAIL_FOLDER . '/' . $companyId)) {
-//            $companyFolder = $this->createDocumentFolder($companyEmailFolder, $companyId);
-//            foreach ($this->locales as $locale) {
-//                $link = new Link();
-//                $link->setKey($locale);
-//                $link->setParent($companyFolder);
-//                $link->setProperty("language", 'text', $locale);
-//                $link->save();
-//
-//            }
-//        }
 
+
+        switch ($subFolder) {
+            case self::TEMPLATE_TYPE_EMAIL:
+                return $this->createDocumentSubFolderForCompany(
+                    $ccpFolder,
+                    self::EMAIL_TEMPLATES_FOLDER,
+                    self::COMPANY_EMAIL_FOLDER,
+                    $companyId
+                );
+            case self::TEMPLATE_TYPE_FAQ:
+                return $this->createDocumentSubFolderForCompany(
+                    $ccpFolder,
+                    self::FAQ_FOLDER,
+                    self::COMPANY_FAQ_FOLDER,
+                    $companyId
+                );
+            case self::TEMPLATE_TYPE_MARKETING_MATERIAL:
+                return $this->createDocumentSubFolderForCompany(
+                    $ccpFolder,
+                    self::MARKETING_MATERIAL_FOLDER,
+                    self::COMPANY_MARKETING_MATERIAL_FOLDER,
+                    $companyId
+                );
+            case self::TEMPLATE_TYPE_ACTIVATION_LETTER:
+                return $this->createDocumentSubFolderForCompany(
+                    $ccpFolder,
+                    self::ACTIVATION_LETTER_FOLDER,
+                    self::COMPANY_ACTIVATION_LETTER_FOLDER,
+                    $companyId
+                );
+            default:
+                return $ccpFolder;
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function createDocumentSubFolderForCompany(Folder $ccpFolder, string $firstLevelFolder, string $secondLevelFolder, int $companyId): Folder
+    {
+        if (!$documentTypeFolder  = Folder::getByPath('/' . self::CCP_DOCUMENT_FOLDER . '/' . $firstLevelFolder)) {
+            $documentTypeFolder = $this->createDocumentFolder( $ccpFolder, $firstLevelFolder);
+        }
+        if (!$companiesFolder  = Folder::getByPath('/' . self::CCP_DOCUMENT_FOLDER . '/' . $firstLevelFolder . '/' . $secondLevelFolder)) {
+            $companiesFolder = $this->createDocumentFolder( $documentTypeFolder, $secondLevelFolder);
+        }
+        if (!$companyFolder = Folder::getByPath('/' . self::CCP_DOCUMENT_FOLDER . '/' . $firstLevelFolder . '/' . $secondLevelFolder . '/' . $companyId)) {
+            $companyFolder = $this->createDocumentFolder($companiesFolder, $companyId);
+            foreach ($this->locales as $locale) {
+                $this->createDocumentFolder($companyFolder, $locale, $locale);
+            }
+        }
+        return $companyFolder;
+    }
+
+    public function getCompanyEmailTemplatesPath(?int $companyId = null) {
+        if (null !== $companyId) {
+            return '/' . self::CCP_DOCUMENT_FOLDER . '/' . self::EMAIL_TEMPLATES_FOLDER . '/' . self::COMPANY_EMAIL_FOLDER . '/' . $companyId;
+        }
+        else {
+            return '/' . self::CCP_DOCUMENT_FOLDER . '/' . self::EMAIL_TEMPLATES_FOLDER;
+        }
     }
 
     public function getCoursesFolderByPartnerProfile(PartnerProfile $profile): ?DataObjectFolder
@@ -214,15 +278,11 @@ class FolderService
     /**
      * @throws Exception
      */
-    public function getOrCreateAssetsFolderForCompany(Company $company, string $language, ?string $documentFolderName = null): AssetFolder
+    public function getOrCreateAssetsFolderForCompany(Company $company, string $language): AssetFolder
     {
         $companyId = (string) $company->getId();
 
-        if (null === $documentFolderName) {
-            $folder = AssetFolder::getByPath('/' . self::COMPANIES_FOLDER . '/' . $companyId . '/' . self::DOCUMENTS . '/' . $language);
-        } else {
-            $folder = AssetFolder::getByPath('/' . self::COMPANIES_FOLDER . '/' . $companyId . '/' . self::DOCUMENTS . '/' . $language. '/' .$documentFolderName);
-        }
+        $folder = AssetFolder::getByPath('/' . self::COMPANIES_FOLDER . '/' . $companyId . '/' . self::DOCUMENTS . '/' . $language);
 
         if ($folder instanceof AssetFolder) {
             return $folder;
@@ -232,13 +292,8 @@ class FolderService
         $this->getOrCreateAssetFolder('/'.self::COMPANIES_FOLDER, $companyId);
         $this->getOrCreateAssetFolder('/'.self::COMPANIES_FOLDER.'/'.$companyId, self::DOCUMENTS);
 
-        $result = $this->getOrCreateAssetFolder('/'.self::COMPANIES_FOLDER.'/'.$companyId.'/'.self::DOCUMENTS, $language);
+        return $this->getOrCreateAssetFolder('/'.self::COMPANIES_FOLDER.'/'.$companyId.'/'.self::DOCUMENTS, $language);
 
-        if (null === $documentFolderName) {
-            return $result;
-        }
-
-        return $this->getOrCreateAssetFolder('/'.self::COMPANIES_FOLDER.'/'.$companyId.'/'.self::DOCUMENTS.'/'.$language, $documentFolderName);
     }
 
     /**

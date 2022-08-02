@@ -25,6 +25,7 @@ class EndUserListOutputPopulator implements EndUserListOutputPopulatorInterface
         $target->dateOfBirth = $source->getDateOfBirth()?->format('Y-m-d');
         $target->registrationDate = $source->getRegistrationDate();
         $target->gender = $source->getGender();
+        $target->businessEmail = $source->getBusinessEmail();
         $target->customFields = $this->endUserService->prepareCustomFields($source);
 
         return $target;

@@ -6,10 +6,12 @@ namespace Tests\Controller\Company;
 
 use App\Controller\Company\EndUserBulkCreateController;
 use App\Message\EndUserBulkCreateMessage;
+use App\Security\AuthorizationAssertHelper;
 use App\Service\EndUser\EndUserBulkUploadService;
 use App\Service\InMemoryUserReaderService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Pimcore\Model\Asset;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Exception\LogicException;
@@ -25,16 +27,21 @@ final class EndUserBulkCreateControllerTest extends TestCase
     /** @var MessageBusInterface|MockObject */
     private MessageBusInterface|MockObject $messageBus;
 
+    /** @var AuthorizationAssertHelper|MockObject */
+    private AuthorizationAssertHelper|MockObject $authorizationAssertHelper;
+
     private EndUserBulkCreateController $controller;
 
     protected function setUp(): void
     {
+        $this->authorizationAssertHelper = $this->createMock(AuthorizationAssertHelper::class);
         $this->inMemoryUserReaderService = $this->createMock(InMemoryUserReaderService::class);
         $this->bulkUploadService = $this->createMock(EndUserBulkUploadService::class);
         $this->messageBus = $this->createMock(MessageBusInterface::class);
 
         $this->controller = new EndUserBulkCreateController($this->inMemoryUserReaderService, $this->bulkUploadService);
         $this->controller->setMessageBusDispatcher($this->messageBus);
+        $this->controller->setAuthorizationAssertHelper($this->authorizationAssertHelper);
     }
 
     protected function tearDown(): void
@@ -44,6 +51,7 @@ final class EndUserBulkCreateControllerTest extends TestCase
             $this->bulkUploadService,
             $this->inMemoryUserReaderService,
             $this->messageBus,
+            $this->authorizationAssertHelper,
         );
     }
 
@@ -68,6 +76,21 @@ final class EndUserBulkCreateControllerTest extends TestCase
     {
         $companyId = 777;
         $confirmationId = 'sdfsfdsfdfdfd';
+
+        $asset = $this->createMock(Asset::class);
+
+        $this->bulkUploadService
+            ->expects(self::once())
+            ->method('findFile')
+            ->with($companyId, $confirmationId)
+            ->willReturn($asset)
+        ;
+
+        $this->authorizationAssertHelper
+            ->expects(self::once())
+            ->method('assertUserIsFileOwner')
+            ->with($asset)
+        ;
 
         $this->bulkUploadService
             ->expects(self::once())

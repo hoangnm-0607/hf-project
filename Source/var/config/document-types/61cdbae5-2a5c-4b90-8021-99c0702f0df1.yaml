@@ -1,0 +1,14 @@
+pimcore:
+    documents:
+        doc_types:
+            definitions:
+                61cdbae5-2a5c-4b90-8021-99c0702f0df1:
+                    name: 'Email Template'
+                    group: Email
+                    controller: 'App\Controller\Documents\Email\CompanyEmailController::emailAction'
+                    template: null
+                    type: page
+                    priority: 0
+                    creationDate: 1657808011
+                    modificationDate: 1658062719
+                    staticGeneratorEnabled: null

@@ -8,6 +8,7 @@ use ApiPlatform\Core\Validator\ValidatorInterface;
 use App\DataTransformer\Company\CompanyAssetDocumentInputDataTransformer;
 use App\Dto\Company\CompanyAssetDocumentInputDto;
 use App\Entity\Company;
+use App\Service\Company\CompanyFileCategoryService;
 use App\Service\FolderService;
 use App\Service\I18NService;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -15,6 +16,8 @@ use PHPUnit\Framework\TestCase;
 
 final class CompanyAssetDocumentInputDataTransformerTest extends TestCase
 {
+    private CompanyFileCategoryService|MockObject $categoryService;
+
     /** @var FolderService|MockObject */
     private FolderService|MockObject $folderService;
 
@@ -31,8 +34,9 @@ final class CompanyAssetDocumentInputDataTransformerTest extends TestCase
         $this->i18NService = $this->createMock(I18NService::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
         $this->folderService = $this->createMock(FolderService::class);
+        $this->categoryService = $this->createMock(CompanyFileCategoryService::class);
 
-        $this->transformer = new CompanyAssetDocumentInputDataTransformer($this->folderService);
+        $this->transformer = new CompanyAssetDocumentInputDataTransformer($this->folderService, $this->categoryService);
         $this->transformer->setI18NService($this->i18NService);
         $this->transformer->setValidator($this->validator);
     }

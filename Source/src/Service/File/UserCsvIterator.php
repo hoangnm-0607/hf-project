@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\File;
 
-class UserIterator extends \SplFileObject
+class UserCsvIterator extends \SplFileObject
 {
     public function __construct(string $pathToFile, string $delimiter = ',', string $fieldEnclosure = '"', string $escapeChar = '\\')
     {

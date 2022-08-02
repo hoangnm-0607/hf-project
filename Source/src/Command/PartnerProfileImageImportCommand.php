@@ -10,6 +10,7 @@ use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject\Data\StructuredTable;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class PartnerProfileImageImportCommand extends AbstractCommand
@@ -28,8 +29,9 @@ class PartnerProfileImageImportCommand extends AbstractCommand
             ->setName('hanse:import:image-openinghours')
             ->setDescription('Configures the studioimage and the opening hours')
             ->setHelp('Configures the studioimage and the opening hours by the given json und image folder')
-            ->addArgument('openinghours', InputArgument::OPTIONAL, 'A json file containing the opening hours')
-            ->addArgument('images', InputArgument::OPTIONAL, 'The folder which contains the images to use. NO other files are allowed and the filename needs to us the cas partner id as name, followed by a usual suffix');
+            ->addOption('openinghours', 'oh', InputArgument::OPTIONAL, 'A json file containing the opening hours')
+            ->addOption('images', 'i', InputArgument::OPTIONAL, 'The folder which contains the images to use. NO other files are allowed and the filename needs to us the cas partner id as name, followed by a usual suffix')
+            ->addOption('partner_ids', 'pid', InputOption::VALUE_OPTIONAL, 'Comma seperated list of cas partner ids which should be used for the import');
     }
 
     /**
@@ -37,8 +39,15 @@ class PartnerProfileImageImportCommand extends AbstractCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $jsonFileName = $input->getArgument('openinghours');
-        $imageFolderName = $input->getArgument('images');
+        $jsonFileName = $input->getOption('openinghours');
+        $imageFolderName = $input->getOption('images');
+
+        $partnerIds = [];
+
+        if ($input->getOption('partner_ids') !== null) {
+            $partnerIds = array_flip(explode(',', $input->getOption('partner_ids')));
+        }
+
         if (isset($jsonFileName)) {
             $openingHoursJson = json_decode(file_get_contents($jsonFileName), true);
 
@@ -53,25 +62,35 @@ class PartnerProfileImageImportCommand extends AbstractCommand
             ];
 
             foreach ($openingHoursJson as $partner) {
-                if (count($partner['hours']) > 0 && ($partnerProfile = PartnerProfile::getByPartnerID($partner['partnerId'], 1))) {
-                    $data = [];
-                    foreach ($partner['hours'] as $weekday => $timeRanges) {
-                        $data[$weekdayMap[$weekday]]['open'] = !empty($timeRanges);
-                        for ($i = 1; $i <= 3; $i++) {
-                            if (isset($timeRanges[$i-1])) {
-                                $data[$weekdayMap[$weekday]]['time_from'.$i] = substr($timeRanges[$i-1],0,2) . ':' . substr($timeRanges[$i-1],2,2);
-                                $data[$weekdayMap[$weekday]]['time_to'.$i] = substr($timeRanges[$i-1],7,2) . ':' . substr($timeRanges[$i-1],9,2);
-                            } else {
-                                $data[$weekdayMap[$weekday]]['time_from'.$i] = null;
-                                $data[$weekdayMap[$weekday]]['time_to'.$i] = null;
+                if (sizeof($partnerIds) > 0 && !array_key_exists($partner['partnerId'], $partnerIds)) {
+                    $output->writeln('HOURS: Did not find CAS ID in given list for ID ' . $partner['partnerId']);
+                    continue;
+                }
+                if (isset($partner['hours']) && count($partner['hours']) > 0 && ($partnerProfile = PartnerProfile::getByPartnerID($partner['partnerId'], 1))) {
+                    if (null === $partnerProfile->getOpeningTimes() || $partnerProfile->getOpeningTimes()->isEmpty()) {
+                        $data = [];
+                        foreach ($partner['hours'] as $weekday => $timeRanges) {
+                            $data[$weekdayMap[$weekday]]['open'] = !empty($timeRanges);
+                            for ($i = 1; $i <= 3; $i++) {
+                                if (isset($timeRanges[$i - 1])) {
+                                    $data[$weekdayMap[$weekday]]['time_from' . $i] = substr($timeRanges[$i - 1], 0, 2) . ':' . substr($timeRanges[$i - 1], 2, 2);
+                                    $data[$weekdayMap[$weekday]]['time_to' . $i] = substr($timeRanges[$i - 1], 7, 2) . ':' . substr($timeRanges[$i - 1], 9, 2);
+                                } else {
+                                    $data[$weekdayMap[$weekday]]['time_from' . $i] = null;
+                                    $data[$weekdayMap[$weekday]]['time_to' . $i] = null;
+                                }
                             }
                         }
-                    }
-                    $openingHours = new StructuredTable($data);
+                        $openingHours = new StructuredTable($data);
 
-                    $output->writeln('HOURS: Updating openinghours for partner with CAS ID ' . $partner['partnerId']);
-                    $partnerProfile->setOpeningTimes($openingHours);
-                    $partnerProfile->save();
+                        $output->writeln('HOURS: Updating openinghours for partner with CAS ID ' . $partner['partnerId']);
+                        $partnerProfile->setOpeningTimes($openingHours);
+                        $partnerProfile->setShowOpeningTimes('Ja');
+                        $partnerProfile->save();
+                    }
+                    else {
+                        $output->writeln('HOURS: Openinghour already exists for partner with CAS ID ' . $partner['partnerId']);
+                    }
                 }
                 else {
                     $output->writeln('HOURS: Partner or hours not found with CAS ID ' . $partner['partnerId']);
@@ -84,6 +103,10 @@ class PartnerProfileImageImportCommand extends AbstractCommand
             foreach ($files as $file) {
                 if ($file != '.' && $file != '..') {
                     $fileParts = explode(".", $file);
+                    if (sizeof($partnerIds) > 0 && !array_key_exists($fileParts[0], $partnerIds)) {
+                        $output->writeln('IMAGE: Did not find CAS ID in given list for ID ' . $fileParts[0]);
+                        continue;
+                    }
                     if ($partnerProfile = PartnerProfile::getByPartnerID($fileParts[0], 1)) {
                        $folder = $this->folderService->getOrCreateGalleryAssetFolderForPartnerProfile($partnerProfile);
                        $image = new Image();

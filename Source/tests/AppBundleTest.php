@@ -16,7 +16,7 @@ final class AppBundleTest extends TestCase
         $jsPaths = $bundle->getJsPaths();
         $cssPaths = $bundle->getCssPaths();
 
-        self::assertCount(7, $jsPaths);
+        self::assertCount(8, $jsPaths);
         self::assertCount(1, $cssPaths);
     }
 }

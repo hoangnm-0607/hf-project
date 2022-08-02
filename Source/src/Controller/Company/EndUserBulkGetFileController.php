@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Controller\Company;
 
 use App\Service\EndUser\EndUserBulkUploadService;
+use App\Traits\AuthorizationAssertHelperTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class EndUserBulkGetFileController
 {
+    use AuthorizationAssertHelperTrait;
+
     private EndUserBulkUploadService $bulkUploadService;
 
     public function __construct(EndUserBulkUploadService $bulkUploadService)
@@ -18,8 +21,11 @@ class EndUserBulkGetFileController
 
     public function __invoke(int $companyId, string $confirmationId): JsonResponse
     {
-        $file = $this->bulkUploadService->findFile($companyId, $confirmationId);
-        $content = json_decode($file->getData(), true);
+        $asset = $this->bulkUploadService->findFile($companyId, $confirmationId);
+
+        $this->authorizationAssertHelper->assertUserIsFileOwner($asset);
+
+        $content = json_decode($asset->getData(), true);
 
         return new JsonResponse($content, JsonResponse::HTTP_OK);
     }

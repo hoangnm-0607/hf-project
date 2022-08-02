@@ -1,0 +1,20 @@
+pimcore:
+    documents:
+        web_to_print:
+            enableInDefaultView: true
+            generalTool: wkhtmltopdf
+            generalDocumentSaveMode: default
+            pdfreactorProtocol: null
+            pdfreactorServer: localhost
+            pdfreactorServerPort: '9423'
+            pdfreactorBaseUrl: 'http://my.domain.com'
+            pdfreactorApiKey: ''
+            pdfreactorLicence: ''
+            pdfreactorEnableLenientHttpsMode: false
+            pdfreactorEnableDebugMode: false
+            wkhtmltopdfBin: wkhtmltopdf
+            wkhtml2pdfOptions:
+                print-media-type: ''
+                page-size: A4
+            wkhtml2pdfHostname: 'http://demo.pimcore.org'
+            headlessChromeSettings: ''

@@ -1,0 +1,4 @@
+// @name Get Company faq
+GET {{api_scheme}}{{api_host}}/api/companies/{{company_id}}/faqs
+Authorization: Bearer {{token}}
+Content-Type: application/json

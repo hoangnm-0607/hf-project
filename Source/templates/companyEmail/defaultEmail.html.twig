@@ -1,60 +1,30 @@
 {% extends('companyEmail/layout.html.twig') %}
 
 {% block header %}
-    {{ pimcore_snippet("header", {"width": 250, "height": 100}) }}
+    {% if editmode %}
+    <h2>Optional: Drag a Email Header here:</h2>
+    {% endif %}
+    {{ pimcore_areablock('emailHeader', {
+        'allowed': ['email-header'],
+        'limit': 1
+    }) }}
 {% endblock %}
 
 
 {% block content %}
-    <div id="greeting">
-        {% block greeting %}
-            {{  pimcore_wysiwyg("specialContent", {
-                "height": 200
-            })
-            }}
-        {% endblock %}
-    </div>
-
-    <div id="text1">
-        {% block text1 %}
-            {{  pimcore_wysiwyg("text1", {
-                "height": 200
-            })
-            }}
-        {% endblock %}
-    </div>
-
-    <div id="fixed">
-        {% block fixed %}
-            {{  pimcore_wysiwyg("fixed", {
-                "height": 200
-            })
-            }}
-        {% endblock %}
-    </div>
-
-    <div id="text2">
-        {% block text2 %}
-            {{  pimcore_wysiwyg("text2", {
-                "height": 200
-            })
-            }}
-        {% endblock %}
-    </div>
-
-    <div id="closing">
-        {% block closing %}
-            {{  pimcore_wysiwyg("closing", {
-                "height": 200
-            })
-            }}
-        {% endblock %}
+    <div id="content">
+        {{ pimcore_areablock('emailContent', {
+            'allowed': ['email-content'],
+        }) }}
     </div>
 {% endblock %}
 
 {% block footer %}
-    {%  if editmode %}
-    <h2>Drag a snippet of typ footer here:</h2>
+    {% if editmode %}
+        <h2>Optional: Drag a Email Footer here:</h2>
     {% endif %}
-    {{ pimcore_snippet("footer", {"width": 250, "height": 100}) }}
+    {{ pimcore_areablock('emailFooter', {
+        'allowed': ['email-footer'],
+        'limit': 1
+    }) }}
 {% endblock %}

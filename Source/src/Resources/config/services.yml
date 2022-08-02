@@ -20,6 +20,8 @@ services:
             $locales: '%locales%'
             $projectDir: '%kernel.project_dir%'
             $defaultLocale: '%default_locale%'
+            $casApiPlatformUri: '%env(CAS_API_PLATFORM_URI)%'
+            $environment: '%kernel.environment%'
 
     _instanceof:
 
@@ -72,6 +74,12 @@ services:
         App\DataTransformer\Populator\EndUser\EndUserListOutputPopulatorInterface:
             tags: [ 'app_bundle.data_transformer.populator.enduser_list.output' ]
 
+        App\Service\File\FileIteratorFactoryInterface:
+            tags: [ 'app_bundle.upload_user_file_iterator' ]
+
+        App\DataTransformer\Populator\CAS\CasPopulatorInterface:
+            tags: [ 'app_bundle.data_transformer.populator.cas_list.output' ]
+
     #
     # CONTROLLERS
     #
@@ -121,6 +129,26 @@ services:
 
     App\Validator\:
         resource: '../../Validator'
+
+
+    #
+    # AreaBricks
+    #
+    App\Document\Areabricks\EmailHeader:
+        tags:
+            - { name: pimcore.area.brick, id: email-header }
+
+    App\Document\Areabricks\EmailFooter:
+        tags:
+            - { name: pimcore.area.brick, id: email-footer }
+
+    App\Document\Areabricks\EmailContent:
+        tags:
+            - { name: pimcore.area.brick, id: email-content }
+
+    App\Document\Areabricks\EmailLink:
+        tags:
+            - { name: pimcore.area.brick, id: email-link }
 
     #
     # EventListners
@@ -209,10 +237,12 @@ services:
     App\EventListener\CompanyCreateListener:
         tags:
             - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: createObjectFolders }
+            - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: createCasCompany }
 
     App\EventListener\EndUserCreateListener:
         tags:
             - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: createAssetFolders }
+            - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: createCasEndUser }
 
     App\EventListener\PartnerProfileDeletionListener:
         tags:
@@ -232,6 +262,10 @@ services:
     App\EventListener\AdminOpenDialogListener:
         tags:
             - { name: kernel.event_listener, event: pimcore.admin.resolve.element, method: resolveElement }
+
+    App\EventListener\DocumentCreationListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.document.postAdd, method: createLanguageDocument }
 
     #
     # API - DataTransformer
@@ -322,6 +356,14 @@ services:
         arguments:
             - !tagged_iterator 'app_bundle.data_transformer.populator.enduser_list.output'
 
+    App\DataTransformer\Populator\CAS\CASPopulatorResolver:
+        arguments:
+            - !tagged_iterator 'app_bundle.data_transformer.populator.cas_list.output'
+
+    App\Service\File\UserFileIteratorResolver:
+        arguments:
+            - !tagged_iterator 'app_bundle.upload_user_file_iterator'
+
     #
     # API - DataProvider
     #
@@ -366,6 +408,11 @@ services:
             $itemsPerPage: '%api_platform.collection.pagination.items_per_page%'
         tags: [ { name: 'api_platform.collection_data_provider' } ]
 
+    App\DataProvider\Company\CompanyFileCategoryListCollectionProvider:
+        arguments:
+            $itemsPerPage: '%api_platform.collection.pagination.items_per_page%'
+        tags: [ { name: 'api_platform.collection_data_provider' } ]
+
     App\DataProvider\AvailabilityItemDataProvider: ~
     App\DataProvider\BookingItemDataProvider: ~
     App\DataProvider\CoursesVppItemDataProvider: ~
@@ -387,6 +434,14 @@ services:
     Knp\Snappy\Pdf:
         factory: [ '@App\Service\File\PdfFactory', create ]
 
+    app.cas.http_client:
+        class: Symfony\Contracts\HttpClient\HttpClientInterface
+        factory: ['@App\Service\CAS\CasHttpClientFactory', create]
+
+    App\Service\CAS\CasCommunicationService:
+        arguments:
+            $httpClient: '@app.cas.http_client'
+
     #
     # Serializer
     #
@@ -406,6 +461,18 @@ services:
     App\Serializer\AssetNormalizer:
         calls:
             - [setNormalizer, ['@api_platform.serializer.normalizer.item']]
+        tags:
+            - { name: serializer.normalizer }
+
+    App\Serializer\FaqNormalizer:
+        calls:
+            - [setNormalizer, ['@api_platform.serializer.normalizer.item']]
+        tags:
+            - { name: serializer.normalizer }
+
+    App\Serializer\CompanyFileCategoryNormalizer:
+        calls:
+            - [ setNormalizer, [ '@api_platform.serializer.normalizer.item' ] ]
         tags:
             - { name: serializer.normalizer }
 

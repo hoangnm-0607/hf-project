@@ -10,7 +10,7 @@ use App\Dto\EndUser\EndUserInputDto;
 use App\Entity\EndUser;
 use App\Message\EndUserBulkCreateMessage;
 use App\Service\Company\CompanyService;
-use App\Service\File\UserIterator;
+use App\Service\File\UserFileIteratorResolver;
 use App\Service\File\UserRow;
 use App\Service\FolderService;
 use App\Traits\I18NServiceTrait;
@@ -32,19 +32,21 @@ class EndUserBulkUploadService
     use I18NServiceTrait;
 
     public const TEMP_END_USER_FILE_PATH = '/'.FolderService::TEMP_FILES_FOLDER.'/'.FolderService::END_USER_BULK_UPLOAD_TEMP_FILES;
-    public const USER_LIST_HEADER = ['First Name', 'Last Name', 'Status', 'Locked', 'Date of Birth', 'Gender', 'Registration Date'];
+    public const USER_LIST_HEADER = ['First Name', 'Last Name', 'Status', 'Locked', 'Date of Birth', 'Gender', 'Business Email', 'Registration Date'];
 
     private Filesystem $filesystem;
     private CompanyService $companyService;
     private FolderService $folderService;
     private EndUserManager $endUserManager;
+    private UserFileIteratorResolver $fileIteratorResolver;
 
-    public function __construct(Filesystem $filesystem, CompanyService $companyService, FolderService $folderService, EndUserManager $endUserManager)
+    public function __construct(Filesystem $filesystem, CompanyService $companyService, FolderService $folderService, EndUserManager $endUserManager, UserFileIteratorResolver $fileIteratorResolver)
     {
         $this->filesystem = $filesystem;
         $this->folderService = $folderService;
         $this->companyService = $companyService;
         $this->endUserManager = $endUserManager;
+        $this->fileIteratorResolver = $fileIteratorResolver;
     }
 
     public function prepareEndUserTable(Listing $users): array
@@ -78,6 +80,7 @@ class EndUserBulkUploadService
                 $endUser->getUserLocked(),
                 $endUser->getDateOfBirth()?->format('Y-m-d'),
                 $endUser->getGender(),
+                $endUser->getBusinessEmail(),
                 $endUser->getRegistrationDate(),
             ];
 
@@ -172,7 +175,7 @@ class EndUserBulkUploadService
     public function analyzeFile(UploadedFile $file, int $companyId, string $owner): EndUserBulkUploadFileDto
     {
         try {
-            $usersFile = new UserIterator($file->getPathname());
+            $usersFile = $this->fileIteratorResolver->getFileIterator($file);
         } catch (\Throwable) {
             $response = new EndUserBulkUploadFileDto();
             $response->errors = 'Bad File Format';
@@ -183,6 +186,7 @@ class EndUserBulkUploadService
 
         $errors = [];
         $successful = [];
+        $allData = [];
 
         $names = [];
         $privateEmails = [];
@@ -201,6 +205,8 @@ class EndUserBulkUploadService
             $dto = $this->getDtoFromRow($row, $companyId);
 
             $lineNumber = sprintf('line%s', $rowNum);
+
+            $allData[$lineNumber] = $row->toArray();
 
             try {
                 $this->validator->validate($dto, ['groups' => ['Default', 'end_user.create']]);
@@ -262,6 +268,7 @@ class EndUserBulkUploadService
         $data = [
             'errors' => $errors,
             'success' => $successful,
+            'allData' => $allData,
         ];
 
         /** @var Asset $asset */
@@ -291,6 +298,7 @@ class EndUserBulkUploadService
             $fileId = substr($asset->getFilename(), 0, strpos($asset->getFilename(), '.json'));
         }
         $dto->success = $data['success'] ?? [];
+        $dto->allData = $data['allData'] ?? [];
         $dto->errorsArray = $errors;
         $dto->confirmationId = $fileId;
         $dto->filePath = $asset->getFullPath();

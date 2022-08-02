@@ -1,0 +1,15 @@
+pimcore:
+    properties:
+        predefined:
+            definitions:
+                fad69342-98cf-4c37-a03c-958973f43ea7:
+                    name: 'CCP File Category'
+                    description: ''
+                    key: company_asset_category
+                    type: object
+                    data: ''
+                    config: ''
+                    ctype: asset
+                    inheritable: false
+                    creationDate: 1658908265
+                    modificationDate: 1658920028

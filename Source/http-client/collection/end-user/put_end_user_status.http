@@ -1,10 +1,10 @@
 // @name Put EndUser status
-PUT {{api_scheme}}{{api_host}}/api/endusers/627/transition
+PUT {{api_scheme}}{{api_host}}/api/endusers/{{enduserId}}/transition
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "transaction": "on_pause",
+    "transaction": "change_pending_start_date",
     "startDate": null,
     "endDate": null
 }

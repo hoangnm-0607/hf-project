@@ -7,7 +7,6 @@ namespace App\DataTransformer\Company;
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use App\Dto\Company\CompanyAssetDto;
 use App\Dto\Company\CompanyAssetsOutputDto;
-use App\Dto\Company\CompanyDataAssetDto;
 use App\Entity\Company;
 use App\Repository\Asset\AssetRepository;
 use App\Service\FolderService;
@@ -44,26 +43,18 @@ class CompanyAssetsOutputDataTransformer implements DataTransformerInterface
         $target->name = FolderService::DOCUMENTS;
 
         $companyDocumentsFolder = $this->folderService->getOrCreateAssetsFolderForCompany($object, $language);
-        $dataAssets = $this->assetRepository->findAllWithParent($companyDocumentsFolder);
 
-        foreach ($dataAssets as $dataAsset) {
-            $assets = $this->assetRepository->findAllWithParent($dataAsset);
+        $assets = $this->assetRepository->findAllAssetsInFolder($companyDocumentsFolder);
 
-            $dataAssetDto = new CompanyDataAssetDto();
-            $dataAssetDto->value = $dataAsset->getKey();
-            $dataAssetDto->id = $dataAsset->getId();
-            $dataAssetDto->type = 'folder';
+        foreach ($assets as $asset) {
+            $assetDto = new CompanyAssetDto();
+            $assetDto->id = $asset->getId();
+            $assetDto->uri = $asset->getFullPath();
+            $assetDto->description = $asset->getProperty('description');
+            $assetDto->originalFilename = $asset->getProperty('originalFilename');
+            $assetDto->categoryId = $asset->getProperty('company_asset_category')->getId();
 
-            foreach ($assets as $asset) {
-                $assetDto = new CompanyAssetDto();
-                $assetDto->id = $asset->getId();
-                $assetDto->type = 's3';
-                $assetDto->value = $asset->getFullPath();
-
-                $dataAssetDto->data[] = $assetDto;
-            }
-
-            $target->data[] = $dataAssetDto;
+            $target->data[] = $assetDto;
         }
 
         return $target;

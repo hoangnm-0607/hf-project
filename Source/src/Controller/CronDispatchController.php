@@ -20,7 +20,8 @@ class CronDispatchController extends AbstractController
         'hanse:notify:imminent',
         'hanse:cleanup:assets',
         'hanse:cleanup:voucher',
-        'hanse:cleanup:partner:terminated'
+        'hanse:cleanup:partner:terminated',
+        'hanse:cleanup:enduser:tempfiles'
     ];
 
     private CronService $cronService;

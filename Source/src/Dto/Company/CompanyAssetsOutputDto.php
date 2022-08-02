@@ -39,9 +39,9 @@ final class CompanyAssetsOutputDto
     public string $language;
 
     /**
-     * @var CompanyDataAssetDto[]
+     * @var CompanyAssetDto[]
      */
     #[ApiProperty(readableLink: true)]
     #[Assert\Type('array')]
-    public array $data = [];
+    public array $data;
 }

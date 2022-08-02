@@ -7,7 +7,6 @@ namespace Tests\DataTransformer\Company;
 use App\DataTransformer\Company\CompanyAssetsOutputDataTransformer;
 use App\Dto\Company\CompanyAssetDto;
 use App\Dto\Company\CompanyAssetsOutputDto;
-use App\Dto\Company\CompanyDataAssetDto;
 use App\Entity\Company;
 use App\Repository\Asset\AssetRepository;
 use App\Service\FolderService;
@@ -15,6 +14,7 @@ use App\Service\I18NService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\CompanyFileCategory;
 
 final class CompanyAssetsOutputDataTransformerTest extends TestCase
 {
@@ -88,10 +88,10 @@ final class CompanyAssetsOutputDataTransformerTest extends TestCase
             ->willReturn($folder)
         ;
 
-        $dataAsset = $this->createMock(Asset::class);
-
-        $dataAssets = new Asset\Listing();
-        $dataAssets->setAssets([$dataAsset]);
+        $companyFileCategory = $this->createMock(CompanyFileCategory::class);
+        $companyFileCategory->expects(self::once())
+        ->method('getId')
+        ->willReturn(1337);
 
         $asset = $this->createMock(Asset::class);
 
@@ -99,23 +99,12 @@ final class CompanyAssetsOutputDataTransformerTest extends TestCase
         $assets->setAssets([$asset]);
 
         $this->assetRepository
-            ->expects(self::atLeast(2))
-            ->method('findAllWithParent')
-            ->withConsecutive([$folder], [$dataAsset])
-            ->willReturnOnConsecutiveCalls($dataAssets, $assets)
+            ->expects(self::once())
+            ->method('findAllAssetsInFolder')
+            ->with($folder)
+            ->willReturn( $assets)
         ;
 
-        $dataAsset
-            ->expects(self::once())
-            ->method('getKey')
-            ->willReturn('key123')
-        ;
-
-        $dataAsset
-            ->expects(self::once())
-            ->method('getId')
-            ->willReturn(123)
-        ;
 
         $asset
             ->expects(self::once())
@@ -129,16 +118,21 @@ final class CompanyAssetsOutputDataTransformerTest extends TestCase
             ->willReturn(456)
         ;
 
+        $asset
+            ->expects(self::exactly(3))
+            ->method('getProperty')
+            ->withConsecutive(['description'], ['originalFilename'], ['company_asset_category'])
+            ->willReturnOnConsecutiveCalls('exampleDescription', 'exampleOriginalFilename.jpg', $companyFileCategory)
+        ;
+
         $response = $this->transformer->transform($company, CompanyAssetsOutputDto::class);
         self::assertSame($language, $response->language);
         self::assertSame('Documents', $response->name);
-        self::assertInstanceOf(CompanyDataAssetDto::class, $response->data[0]);
-        self::assertSame(123, $response->data[0]->id);
-        self::assertSame('folder', $response->data[0]->type);
-        self::assertSame('key123', $response->data[0]->value);
-        self::assertInstanceOf(CompanyAssetDto::class, $response->data[0]->data[0]);
-        self::assertSame(456, $response->data[0]->data[0]->id);
-        self::assertSame('s3', $response->data[0]->data[0]->type);
-        self::assertSame('http://sourse.jpg', $response->data[0]->data[0]->value);
+        self::assertInstanceOf(CompanyAssetDto::class, $response->data[0]);
+        self::assertSame(456, $response->data[0]->id);
+        self::assertSame('http://sourse.jpg', $response->data[0]->uri);
+        self::assertSame('exampleDescription', $response->data[0]->description);
+        self::assertSame(1337, $response->data[0]->categoryId);
+        self::assertSame('exampleOriginalFilename.jpg', $response->data[0]->originalFilename);
     }
 }
