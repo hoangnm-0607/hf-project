@@ -470,12 +470,6 @@ services:
         tags:
             - { name: serializer.normalizer }
 
-    App\Serializer\CompanyFileCategoryNormalizer:
-        calls:
-            - [ setNormalizer, [ '@api_platform.serializer.normalizer.item' ] ]
-        tags:
-            - { name: serializer.normalizer }
-
     App\Serializer\EventListNormalizer:
         tags:
             - { name: serializer.normalizer }

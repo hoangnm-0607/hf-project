@@ -60,9 +60,44 @@ final class CompanyNamesListOutputDataTransformerTest extends TestCase
             ->willReturn('CompanyName')
         ;
 
+        $company
+            ->expects(self::once())
+            ->method('getStreet')
+            ->willReturn('Osterdeich')
+        ;
+
+        $company
+            ->expects(self::once())
+            ->method('getNumber')
+            ->willReturn('42')
+        ;
+
+        $company
+            ->expects(self::once())
+            ->method('getZip')
+            ->willReturn('12345')
+        ;
+
+        $company
+            ->expects(self::once())
+            ->method('getCity')
+            ->willReturn('Bremen')
+        ;
+
+        $company
+            ->expects(self::once())
+            ->method('getCountry')
+            ->willReturn('DE')
+        ;
+
         $response = $this->transformer->transform($company, CompanyNamesListOutputDto::class);
         self::assertInstanceOf(CompanyNamesListOutputDto::class, $response);
         self::assertSame(777, $response->companyId);
         self::assertSame('CompanyName', $response->companyName);
+        self::assertSame('Osterdeich', $response->street);
+        self::assertSame('42', $response->number);
+        self::assertSame('12345', $response->zip);
+        self::assertSame('Bremen', $response->city);
+        self::assertSame('DE', $response->country);
     }
 }

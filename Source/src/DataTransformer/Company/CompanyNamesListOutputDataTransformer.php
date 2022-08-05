@@ -23,6 +23,11 @@ class CompanyNamesListOutputDataTransformer implements DataTransformerInterface
 
         $target->companyId = $object->getId();
         $target->companyName = $object->getName();
+        $target->street = $object->getStreet();
+        $target->number = $object->getNumber();
+        $target->zip = $object->getZip();
+        $target->city = $object->getCity();
+        $target->country = $object->getCountry();
 
         return $target;
     }
